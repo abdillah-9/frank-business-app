@@ -1,0 +1,20 @@
+*** Business Tasks Management System ***
+
+-> Requirements / Features Categories:
+1) User 2) Tasks 3) Expenditure 4) Employees
+
+-> MiniFeatures / Files or components:
+1) User
+a) User Login b) User SignUp/Create Account c) Delete Account d)LogOut
+
+2)Tasks
+a) Create b)View Tasks c) Edit Tasks d) Delete Tasks e) index file where others will be imported as components
+
+3) Expenditure
+[edit, delete, view, create]   e) index file where others will be imported as components
+
+4) Employees
+[edit, delete, view, create]   e) index file where others will be imported as components
+
+-> UI Folder that comprises reusable components ie buttons input fields etc
+a) Header b) Footer c) Error d)
