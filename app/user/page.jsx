@@ -1,69 +1,84 @@
 "use client"
+import React from 'react'
+import Table from './Table'
+import Container from '@app/reusables/UI_components/Container'
+import Texts from '@app/reusables/UI_components/Texts'
+import Button from '@app/reusables/UI_components/Button'
+import Icon from '@app/reusables/UI_components/Icon'
+import {BiAddToQueue} from 'react-icons/bi'
+import { useDispatch, useSelector } from '@node_modules/react-redux/dist/react-redux'
+import { setReduxState } from '@app/provider/redux/reducer'
+import Form from './Form'
 
-import { useDispatch, useSelector} from 'react-redux';
-import Button from '@app/UI components/Button';
-import Container from '@app/UI components/Container';
-import Card from '@app/UI components/Card';
-import { getAllUsers } from '@utils/apiUsers';
-import { useQuery} from '@node_modules/@tanstack/react-query';
-import LoadingSpinner from '@app/UI components/LoadingSpinner';
-import UsersTableModel from './UsersTableModel';
-import toast from '@node_modules/react-hot-toast/dist';
-import { setOverlay } from '@app/UI components/Overlay/reduxSlice/overlayReducer';
-import FormModel from './UserFormModel';
-import { IoArrowRedoOutline } from '@node_modules/react-icons/io5';
+export default function page() {
+  const dispatch = useDispatch();
+  const formState = useSelector((store)=>store.ReduxState.showForm);
+  const overlayState = useSelector((store)=>store.ReduxState.overlay);
 
-const Page = () => {
-  let showForm = useSelector((store)=> store.overlay.overlay);
+  function showFormHandler(){
+    dispatch(setReduxState({showForm: !formState, overlay: !overlayState}));
+  }
 
-  //Now lets use the React Query to fetch data from supabase
-    const {isLoading, data, error} =  useQuery({
-      queryKey: ['allUsers'],
-      queryFn: getAllUsers
-    });
-
-    //functionality of displaying form field
-    let dispatch = useDispatch();
-    function handleCreate(){
-      dispatch(setOverlay({overlay: true, fetchedFormData: false}));
-    } 
-
-   //If isLoading = then display the Spinner
-   if(isLoading){
-     return  <LoadingSpinner/>
-   }
- 
   return (
-    <>
-    { showForm && <FormModel></FormModel>}
-    <Container width={"100%"}>
-      <div className="headerText"> Users </div><div className="miniHeaderText">Company Users</div>
-    </Container>
-
-    <Container height={"78.5vh"} width={"100%"} boxShadow={"5px 3px 45px rgb(2, 37, 58)"} 
-    style={{overflow:"auto"}} >
-
-      <Card padding={"5px"} width={"100%"} justifyContent={"flex-end"}>
-        <Button boxShadow={"-5px 3px 25px rgb(2, 37, 58)"} 
-        actionHandler={handleCreate} gap='8px'>
-         <IoArrowRedoOutline/><div style={{fontSize:"13px"}}>Create employee</div>
+    <div style={expensContainer}>
+      <Form/>
+      <Container>
+        <Texts textStyle={headingStyle}>Active user</Texts>
+        <Container containerStyle={buttonsContainer}>
+          <Button buttonStyle={buttonWidth}>All</Button>
+          <Button buttonStyle={buttonWidth}>Confirmed</Button>
+          <Button buttonStyle={buttonWidth}>Unconfirmed</Button>
+        </Container>
+      </Container>
+      <Container containerStyle={tableContainer}>
+        <Table/>
+      </Container>   
+      <Container>
+        <Button buttonStyle={createButton} actionHandler={showFormHandler}>
+          <Icon><BiAddToQueue /></Icon>Update user
         </Button>
-      </Card>
-      
-      <Card width={"100%"} boxShadow={"5px 3px 25px rgb(2, 97, 170)"} >
-        <div style={{height: "60vh", width: "100%", overflow: "auto", padding: "0px"}}>
-          <section style={{height: "auto", width: "100%",}}>
-          { /* Print data here */ }
-            {
-              data ? <UsersTableModel data={data}/> : <LoadingSpinner/>
-            }
-          </section>
-        </div>
-      </Card>
+      </Container>  
+    </div>
+  )
+}
 
-    </Container>
-    </>
-  );
-};
+//CSS
+const expensContainer={
+  display:"flex",
+  flexDirection:"column",
+  gap:"30px",
+  height:"100%",
+}
 
-export default Page;
+const headingStyle={
+  fontSize:"20px",
+  fontWeight:500,
+}
+
+const tableContainer={
+  height:"100%",
+  overflow:"auto"
+}
+
+const buttonWidth={
+  textAlign:"left",padding:"5px", fontSize:"13px"
+}
+
+const buttonsContainer={
+  boxShadow:"2px 3px 20px rgb(70, 68, 68)",
+  width:"fit-content",
+  backgroundColor:"white"
+}
+
+const createButton={
+  width:"100%",
+  backgroundColor:"rgba(79, 8, 161, 0.76)",
+  boxShadow:"1px 1px 10px rgb(40, 33, 43)",
+  padding:"8px",
+  color:"white",
+  fontSize:"14px",
+  display:"flex",
+  gap:"6px",
+  justifyContent:"center",
+  alignItems:"center",
+}

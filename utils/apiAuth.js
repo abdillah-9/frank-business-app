@@ -7,7 +7,7 @@ export async function SignUp(userData){
   //Create file name if avatar is not ""
   if(avatar){
   let avatarName = Math.random()+"/"+avatar.name;
-  let avatarPath = "https://hlppyilngpqwxfijkoab.supabase.co/storage/v1/object/public/avatar/"+avatarName;
+  let avatarPath = "https://qrsfeffnfqyohagdakgd.supabase.co/storage/v1/object/public/avatar/"+avatarName;
 
     //Send avatar in avatar store
     const { error: storageError } = await supabase1.storage
@@ -31,7 +31,7 @@ export async function SignUp(userData){
 // Account without Avatar
 else if(!avatar){
 
-  //Send all data alongside with avatar in respective table
+  //Send all data alongside with avatar="" in respective table
   const {data, error} = await supabase1.auth.signUp({email,password,options:{
     data:{fullName, avatar:""}
   }})
@@ -59,7 +59,7 @@ const { data, error } = await supabase1.auth.signInWithPassword({
 
 export async function getCurrentUser() {
   const {data: session} = await  supabase1.auth.getSession() // Here I fetch auth token in local storage 
-  // of given computer or device
+  
   if(!session.session) return null;
   
   const {data, error} = await supabase1.auth.getUser();

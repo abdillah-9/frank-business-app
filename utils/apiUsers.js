@@ -35,7 +35,7 @@ export async function getAllUsers(){
 
   export async function updateUser({avatar,id,password,fullName,email}){
     console.log("update user api "+" id :"+id+" avatar:"+avatar+" password:"+password+" fullname: "+fullName+" email: "+email);
-    const supabaseUrl = "https://hlppyilngpqwxfijkoab.supabase.co/storage/v1/object/public/avatar/";
+    const supabaseUrl = "https://qrsfeffnfqyohagdakgd.supabase.co/storage/v1/object/public/avatar/";
 
     //First condition PASSWORD AND AVATAR ***************************************
     if(password && avatar){

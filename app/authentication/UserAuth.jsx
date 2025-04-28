@@ -2,12 +2,9 @@
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import useUser from './hooks/useUser';
-import FullScreenLoadingSpinner from '@app/UI components/FullScreenLoadingSpinner';
-import { setOverlay } from '@app/UI components/Overlay/reduxSlice/overlayReducer';
-import { useDispatch } from '@node_modules/react-redux/dist/react-redux';
+import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner';
 
-export default function UserAuth({ children }) {
-  const dispatch = useDispatch();
+export default function UserAuth() {
   const [isClient, setIsClient] = useState(false);  // To check if it's in client-side
   const routing = useRouter();
   
@@ -25,9 +22,7 @@ export default function UserAuth({ children }) {
   // Redirect user to Login page if there is no authenticated user token in local storage
   useEffect(() => {
     if (!isAuthenticated && !userLoading) {
-      //routing.push("/authentication/login");
-      routing.push("/authentication/login");
-      dispatch(setOverlay({showSideNavBar:false}));
+      routing.push("/authentication/signIn");
     }
   }, [isAuthenticated, userLoading, routing]);
 
@@ -40,9 +35,17 @@ export default function UserAuth({ children }) {
   }, [isAuthenticated, currentUserUrl, userLoading, routing]);
 
   // Show loading spinner while user data is loading
-  if (userLoading) return <FullScreenLoadingSpinner/>
+  if (userLoading) return <div style={spinnerFullScreen}><LoadingSpinner/></div>
 
-  return (
-<></>
-  );
+  return (<></>);
+}
+const spinnerFullScreen={
+  width:"100vw",
+  height:"100vh",
+  display:"flex",
+  position:"fixed",
+  justifyContent:"center",
+  alignItems:"center",
+  backgroundColor:"white",
+  zIndex:3,
 }

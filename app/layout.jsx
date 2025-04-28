@@ -1,26 +1,28 @@
 import '@styles/globals.css';
-import TopNavBar from '@app/UI components/nav_bars/topNavBar/TopNavBar';
-import LeftSideNavBar from '@app/UI components/nav_bars/leftNavBar/LeftNavBar';
-import ReactQueryProvider from "./provider/ReactQueryProvider";
-import { Toaster } from '@node_modules/react-hot-toast/dist';
+import ReduxProvider from './provider/redux/ReduxProvider';
+import LeftNavBar from './reusables/UI_components/nav_bars/leftNavBar/LeftNavBar';
+import TopNavBar from './reusables/UI_components/nav_bars/topNavBar/TopNavBar';
+import { Toaster } from '@node_modules/react-hot-toast';
+import Overlay from './reusables/UI_components/Overlay/Overlay';
+import DynamicPage from './Dynamic';
+import ReactQueryProvider from './provider/reactQuery/ReactQueryProvider';
 import UserAuth from './authentication/UserAuth';
-import MainApp from './UI components/MainApp';
 
 const RootLayout = ({children}) => {
 
   return ( 
-    <html lang='en'>
-        <body className='w-screen h-screen' style={{overflow:"auto"}}>
-          <ReactQueryProvider>
-            <UserAuth/>
+    <ReactQueryProvider>        
+    <ReduxProvider>
+      <html lang='en' style={universalStyle}>
+        <body style={container}>
+        <UserAuth/>
+          <div style={rightSide}>
             <TopNavBar/>
-            <main style={main1}>
-              <LeftSideNavBar/>
-              <MainApp>
-                {children}  
-              </MainApp>
-            </main> 
-            <Toaster 
+            <DynamicPage>{children}</DynamicPage>
+          </div>
+          <LeftNavBar/>
+          <Overlay/>
+          <Toaster 
               position="top-right"
               gutter={20} 
               containerStyle={{
@@ -45,19 +47,31 @@ const RootLayout = ({children}) => {
                 }
               }}
               />
-          </ReactQueryProvider>
         </body>
-    </html>
-
+      </html>
+    </ReduxProvider>
+    </ReactQueryProvider>
   )
 }
 
-//CSS styles
-const main1={
-  //  className='flex flex-wrap flex-row'
-   display:"flex",
-   flexWrap:"wrap",
-   flexDirection:"row",
+//CSS objs
+const universalStyle={
+  boxSizing:"border-box",
+  padding:0,margin:0,
+}
+
+const container={
+  width:"100vw",
+  display:"flex",
+  flexDirection:"row-reverse",
+  padding:0,
+  margin:0,
+}
+
+const rightSide={
+  width:"100%",
+  padding:"0px 0px 0px 4px",
+  backgroundColor:"rgb(235,235,235)",
 }
 
 export default RootLayout
