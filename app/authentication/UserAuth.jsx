@@ -15,7 +15,7 @@ export default function UserAuth() {
     if (!userLoading && !isAuthenticated && pathname !== "/authentication/signIn") {
       router.push("/authentication/signIn");
     }
-  }, [pathname, router]);
+  }, []);
 
   // Redirect authenticated users away from auth pages or homepage
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function UserAuth() {
     if (!userLoading && isAuthenticated && isRestricted) {
       router.push("/dashboard");
     }
-  }, [pathname, router]);
+  }, []);
 
   // Show loading spinner while checking auth
   if (userLoading) {
