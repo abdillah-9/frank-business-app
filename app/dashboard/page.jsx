@@ -2,7 +2,7 @@ import ManagerDashbord from "./ManagerDashbord";
 
 const Page = () => {
   return (
-    <ManagerDashbord/>
+    <>dashboard</>
   );
 };
 

@@ -1,6 +1,6 @@
 {
-  "name": "share_prompts",
-  "version": "0.1.0",
+  "name": "finance-management-app",
+  "version": "1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",

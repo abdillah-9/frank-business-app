@@ -7,7 +7,7 @@ export default function useUser(){
         queryKey:["user"],
         queryFn:getCurrentUser
     });
-    console.log("user fetched from cache: "+user)
+    //console.log("user fetched from cache: "+ JSON.stringify(user))
 
     return {isLoading, user, isAuthenticated: user?.role === "authenticated"}
 }
