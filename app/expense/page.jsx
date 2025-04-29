@@ -12,15 +12,17 @@ import Form from './Form'
 import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy'
 import { getBudgetData } from '@utils/apiBudget'
 import { getExpenseData } from '@utils/apiExpense'
+import { useCreateExpense } from './expenseHooks/useCreateExpense'
+import useUser from '@app/authentication/hooks/useUser'
+import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner'
 
 export default function page() {
   //Using React Query to fetch data from supabase
-  let id=""
     const {insertDataMutation} = useCreateExpense();
     const {user} = useUser();
   
-    if(user){
-      id = user.id || "";
+    if(!user){
+      <LoadingSpinner/>
     }  
   
   const {isLoading, data: budget, error} =  useQuery({
@@ -44,7 +46,7 @@ export default function page() {
 
   return (
     <div style={expensContainer}>
-      <Form budget={budget}/>
+      <Form budget={budget} user={user} insertDataMutation={insertDataMutation}/>
       <Container>
         <Texts textStyle={headingStyle}>All expenses</Texts>
         <Container containerStyle={buttonsContainer}>

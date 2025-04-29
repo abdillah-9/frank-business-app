@@ -9,7 +9,7 @@ import { useCreateExpense } from './expenseHooks/useCreateExpense';
 import toast from '@node_modules/react-hot-toast/dist';
 import useUser from '@app/authentication/hooks/useUser';
 
-export default function Form({budget}) {
+export default function Form({budget, insertDataMutation, user}) {
   let id;let amount; let name;let description; let dateCreated;let images="";let fetchedFormData=false; 
 
   const formState = useSelector((store)=>store.ReduxState.showForm);
@@ -17,10 +17,6 @@ export default function Form({budget}) {
   function handleShowForm(){
     dispatch(setReduxState({overlay: false, showForm: false}));
   }
-
-
-  const {insertDataMutation} = useCreateExpense();
-  const {user} = useUser();
 
   if(user){
     id = user.id || "";
