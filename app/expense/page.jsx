@@ -15,6 +15,14 @@ import { getExpenseData } from '@utils/apiExpense'
 
 export default function page() {
   //Using React Query to fetch data from supabase
+  let id=""
+    const {insertDataMutation} = useCreateExpense();
+    const {user} = useUser();
+  
+    if(user){
+      id = user.id || "";
+    }  
+  
   const {isLoading, data: budget, error} =  useQuery({
     queryKey: ['budgetData'],
     queryFn: getBudgetData
@@ -46,7 +54,7 @@ export default function page() {
         </Container>
       </Container>
       <Container containerStyle={tableContainer}>
-        <Table budget={budget} expense={expense}/>
+        <Table budget={budget} expense={expense} user={user}/>
       </Container>   
       <Container>
         <Button buttonStyle={createButton} actionHandler={showFormHandler}>
