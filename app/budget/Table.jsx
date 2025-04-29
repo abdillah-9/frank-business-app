@@ -18,6 +18,9 @@ export default function Table() {
   const {user} = useUser();
   let id = "";
 
+  if (!user) {
+  return <LoadingSpinner />;
+  }
   if(user){
     id = user.id || "";
   }
@@ -52,7 +55,7 @@ const upcoming = {
           </THead>
            <TBody>
             {
-              budget?.filter(exp => exp.userID === user.id).map(budgetRow=>
+              budget ? budget.filter(exp => exp.userID === user.id).map(budgetRow=>
                 <TR key={budgetRow.id} styleTR={tRow}>
                   <TD styleTD={tCell}>{budgetRow.name}</TD>
                   <TD styleTD={tCell}>{budgetRow.amount+"TSh"}</TD>
@@ -72,7 +75,7 @@ const upcoming = {
                     <Icon><HiOutlineTrash/></Icon>
                   </TD>
                 </TR>
-              )} : <TR><TH><LoadingSpinner/></TH></TR>
+              ) : <TR><TH>No data found</TH></TR>}
             
            </TBody>
         </TableContainer>

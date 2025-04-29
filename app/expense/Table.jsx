@@ -2,7 +2,6 @@
 import TableContainer, { TBody,THead,TH,TR,TD } from '@app/reusables/UI_components/Table/TableContainer'
 import Image from '@node_modules/next/image';
 import {MdOutlineNoPhotography} from "react-icons/md"
-
 import React from 'react'
 import Icon from '@app/reusables/UI_components/Icon';
 import { RiCameraOffLine } from '@node_modules/react-icons/ri';
@@ -10,9 +9,6 @@ import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner';
 import { HiOutlinePencil, HiOutlineTrash } from '@node_modules/react-icons/hi2';
 
 export default function Table({expense, budget, user}) {
-  let photo="";
-  console.log("expense is "+JSON.stringify(expense))
-
   //CSS
   const unConfirmed = {
     backgroundColor:"rgba(204, 7, 7, 0.37)",
@@ -21,6 +17,11 @@ export default function Table({expense, budget, user}) {
   const confirmed = {
     backgroundColor:"rgba(3, 196, 67, 0.37)",
     color:"rgb(6, 43, 1)",
+  }
+
+  let photo=""
+  if (!user){
+    return <LoadingSpinner/>
   }
 
   return (
@@ -38,7 +39,7 @@ export default function Table({expense, budget, user}) {
           </THead>
            <TBody>
             {
-              expense?.filter(exp => exp.userID === user.id).map(expenseRow=>
+              expense ? expense.filter(exp => exp.userID === user.id).map(expenseRow=>
                 <TR key={expenseRow.id} styleTR={tRow}>
                   <TD styleTD={tCell}>
                     {
@@ -65,7 +66,7 @@ export default function Table({expense, budget, user}) {
                     <Icon><HiOutlineTrash/></Icon>
                   </TD>
                 </TR>
-            )} : <TR><TD><LoadingSpinner/></TD></TR>
+            ) : <TR><TD>Data not found</TD></TR>}
             
            </TBody>
         </TableContainer>
