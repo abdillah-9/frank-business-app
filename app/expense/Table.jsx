@@ -9,7 +9,7 @@ import { RiCameraOffLine } from '@node_modules/react-icons/ri';
 import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner';
 import { HiOutlinePencil, HiOutlineTrash } from '@node_modules/react-icons/hi2';
 
-export default function Table({expense, budget}) {
+export default function Table({expense, budget, user}) {
   let photo="";
   console.log("expense is "+JSON.stringify(expense))
 
@@ -38,7 +38,7 @@ export default function Table({expense, budget}) {
           </THead>
            <TBody>
             {
-              expense ?  expense.map(expenseRow=>
+              expense?.filter(exp => exp.userID === user.id).map(expenseRow=>
                 <TR key={expenseRow.id} styleTR={tRow}>
                   <TD styleTD={tCell}>
                     {
@@ -65,8 +65,8 @@ export default function Table({expense, budget}) {
                     <Icon><HiOutlineTrash/></Icon>
                   </TD>
                 </TR>
-              ) : <TR><TD><LoadingSpinner/></TD></TR>
-            }
+            )} : <TR><TD><LoadingSpinner/></TD></TR>
+            
            </TBody>
         </TableContainer>
   )

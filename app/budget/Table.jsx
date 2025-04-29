@@ -52,7 +52,7 @@ const upcoming = {
           </THead>
            <TBody>
             {
-              budget ?  budget.map(budgetRow=>
+              budget?.filter(exp => exp.userID === user.id).map(budgetRow=>
                 <TR key={budgetRow.id} styleTR={tRow}>
                   <TD styleTD={tCell}>{budgetRow.name}</TD>
                   <TD styleTD={tCell}>{budgetRow.amount+"TSh"}</TD>
@@ -72,8 +72,8 @@ const upcoming = {
                     <Icon><HiOutlineTrash/></Icon>
                   </TD>
                 </TR>
-              ) : <TR><TH><LoadingSpinner/></TH></TR>
-            }
+              )} : <TR><TH><LoadingSpinner/></TH></TR>
+            
            </TBody>
         </TableContainer>
   )
