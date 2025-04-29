@@ -6,6 +6,8 @@ import useWindowSize from '@app/reusables/CUSTOM_hooks/useWindowSize';
 import { useDispatch, useSelector } from '@node_modules/react-redux/dist/react-redux';
 import { setReduxState } from '@app/provider/redux/reducer';
 import useUser from '@app/authentication/hooks/useUser';
+import useLogOut from '@app/authentication/hooks/useLogOut';
+import toast from '@node_modules/react-hot-toast/dist';
 
 export default function TopNavBar() {
 
@@ -32,6 +34,8 @@ export default function TopNavBar() {
     alt:"user photo",
   }
 
+  const {logOut} = useLogOut();
+
   return (
     <div>
       <NavBarTemp navBarTempStyle={navBarTempStyle}>
@@ -52,7 +56,7 @@ export default function TopNavBar() {
             }
           </NavBarTemp.NavIcon>
 
-          <NavBarTemp.NavIcon navIconStyle={icons}  >
+          <NavBarTemp.NavIcon navIconStyle={icons} iconEvent={logOut} >
             <RiLogoutCircleRLine/>
           </NavBarTemp.NavIcon>
         </NavBarTemp.NavContainer>
