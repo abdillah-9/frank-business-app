@@ -1,38 +1,40 @@
 "use client"
-import useUser from '@app/authentication/hooks/useUser';
 import { setReduxState } from '@app/provider/redux/reducer';
 import useWindowSize from '@app/reusables/CUSTOM_hooks/useWindowSize';
 import FormContainer from '@app/reusables/UI_components/Form/FormContainer'
 import { HiXCircle } from '@node_modules/react-icons/hi2';
 import { useDispatch, useSelector } from '@node_modules/react-redux/dist/react-redux';
 import React from 'react'
-import { useCreateBudget } from './budgetHooks/useCreateBudget';
-import toast from '@node_modules/react-hot-toast/dist';
+import toast from '@node_modules/react-hot-toast';
 
-export default function Form() {
-  const {user} = useUser();
-  let id = "";
-
-  if(user){
-    id = user.id || "";
-  }
-
-  let amount; let name; let category; let status; let description; let startDate; let endDate;let fetchedFormData=false; 
-
+export default function Form({insertDataMutation, updateDataMutation, user}) {
   const formState = useSelector((store)=>store.ReduxState.showForm);
+  const newData = useSelector((store)=>store.ReduxState.fetchedFormData);
   const dispatch = useDispatch();
   const {windowSize} = useWindowSize();
+
+  let id=""; let userID = "";
+  let amount=""; let name=""; let category=""; let status=""; let description=""; let startDate=""; let endDate="";
+
+  if(!user || !formState){
+    return 
+  }
+
+  if(newData){
+    ({id,name, amount, status, category, description, startDate, endDate} = newData);
+  }
+  userID = user.id;
+
   function handleShowForm(){
     dispatch(setReduxState({overlay: false, showForm: false}));
   }
-  const {insertDataMutation} = useCreateBudget();
 
   function formSubmit(data){
-    user? console.log("userID"+ JSON.stringify(data)) :""
-
-    insertDataMutation({    
-     // id, 
-      ...data})
+    user? console.log("submitted data is "+ JSON.stringify(data)) :""
+    newData.id ? 
+    updateDataMutation({...data})
+    :
+    insertDataMutation({...data})
     dispatch(setReduxState({showForm: false, overlay:false}));
   }
 
@@ -83,7 +85,8 @@ export default function Form() {
           <HiXCircle/>
         </FormContainer.Icon>
       </FormContainer.SubmitRow>
-      <FormContainer.Text text={id} inputStyle={idStyle} fieldName={"userID"}/>
+      <FormContainer.Number number={id} inputStyle={idStyle} fieldName={"id"}/>
+      <FormContainer.Text text={userID} inputStyle={idStyle} fieldName={"userID"}/>
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}> name </FormContainer.Label>
@@ -99,7 +102,7 @@ export default function Form() {
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}>status</FormContainer.Label>
-        <FormContainer.Select inputStyle={inputStyle} fieldName={"status"}> 
+        <FormContainer.Select inputStyle={inputStyle} fieldName={"status"} selected={status}> 
           <FormContainer.Option optionValue={"active"}>active</FormContainer.Option>
           <FormContainer.Option optionValue={"expired"}>expired</FormContainer.Option>
           <FormContainer.Option optionValue={"upcoming"}>upcoming</FormContainer.Option>
@@ -108,7 +111,7 @@ export default function Form() {
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}>category</FormContainer.Label>
-        <FormContainer.Select inputStyle={inputStyle} fieldName={"category"}> 
+        <FormContainer.Select inputStyle={inputStyle} fieldName={"category"} selected={category}> 
           <FormContainer.Option optionValue={"food"}>food</FormContainer.Option>
           <FormContainer.Option optionValue={"transport"}>transport</FormContainer.Option>
           <FormContainer.Option optionValue={"clothes"}>clothes</FormContainer.Option>
@@ -136,7 +139,7 @@ export default function Form() {
       <FormContainer.SubmitRow submitRow={submitRow}>
         <FormContainer.Cancel cancelStyle={cancelStyle}>Cancel</FormContainer.Cancel>
         <FormContainer.Submit submitButton={submitButton}>
-          {fetchedFormData? "Update budget" : "Create budget" }
+          {newData.id ? "Update budget" : "Create budget" }
         </FormContainer.Submit>
       </FormContainer.SubmitRow>
 

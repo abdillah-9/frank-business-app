@@ -19,10 +19,10 @@ export default function Form() {
 
       // React Hook Config
       const formSubmit = (data)=>{
-        console.log(JSON.stringify("data.avatar is "+ Object.entries(data)));
+        console.log(JSON.stringify("avatar is "+ Object.entries(data)));
+        console.log("avatar is "+data.avatar.name)
         createUser({
           ...data,
-          avatar: avatar ? data.avatar[0] : "",
         });
         
         //Redirect to signIn
@@ -72,7 +72,7 @@ export default function Form() {
             </FormContainer.Row>
 
             <FormContainer.Row formRow={formRow}>
-                <FormContainer.File fStyles={[fileStyle, fileStyleSpan]} fileName={"images"} 
+                <FormContainer.File fStyles={[fileStyle, fileStyleSpan]} fileName={"avatar"} 
                   images={avatar} validation={validateFile}>
                   <Icon iconStyle={{fontSize:"20px"}}><IoImageOutline/></Icon>
             </FormContainer.File>

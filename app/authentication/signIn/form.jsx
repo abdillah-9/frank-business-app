@@ -13,8 +13,7 @@ export default function Form() {
     const {login, signInLoading, status:authStatus} = useLogin(); //import login mutation
 
     //Define formSubmit
-    const formSubmit=(data,e)=>{
-      e.preventDefault(); 
+    const formSubmit=(data)=>{
         console.log("Submitted data from form "+JSON.stringify({...data}));
         const {email, password} = data;
         if(!email || !password) return

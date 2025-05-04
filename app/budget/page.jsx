@@ -9,20 +9,31 @@ import {BiAddToQueue} from 'react-icons/bi'
 import { useDispatch, useSelector } from '@node_modules/react-redux/dist/react-redux'
 import { setReduxState } from '@app/provider/redux/reducer'
 import Form from './Form'
+import DeletePrompt from '@app/reusables/UI_components/deletePrompt'
+import { useDeleteFormData } from './budgetHooks/useDeleteBudget'
+import { useCreateBudget } from './budgetHooks/useCreateBudget'
+import { useUpdateFormData } from './budgetHooks/useUpdateBudget'
+import useUser from '@app/authentication/hooks/useUser'
 
 export default function page() {
+  //Using React Query to fetch data from supabase
+    const {insertDataMutation} = useCreateBudget();
+    const {updateDataMutation} = useUpdateFormData();
+    const {mutateDeleting} = useDeleteFormData();
+    const {user} = useUser();
 
   const dispatch = useDispatch();
   const formState = useSelector((store)=>store.ReduxState.showForm);
   const overlayState = useSelector((store)=>store.ReduxState.overlay);
 
-  function showFormHandler(){
-    dispatch(setReduxState({showForm: !formState, overlay: !overlayState}));
+  function createHandlerFunc(){
+    dispatch(setReduxState({showForm: !formState, overlay: !overlayState,fetchedFormData: false}));
   }
 
   return (
     <div style={expensContainer}>
-      <Form/>
+      <Form updateDataMutation={updateDataMutation} insertDataMutation={insertDataMutation} user={user}/>
+      <DeletePrompt mutateDeleting={mutateDeleting}/>
       <Container>
         <Texts textStyle={headingStyle}>All budgets</Texts>
         <Container containerStyle={buttonsContainer}>
@@ -35,7 +46,7 @@ export default function page() {
         <Table/>
       </Container>   
       <Container>
-        <Button buttonStyle={createButton} actionHandler={showFormHandler}>
+        <Button buttonStyle={createButton} actionHandler={createHandlerFunc}>
           <Icon><BiAddToQueue /></Icon>Create budget
         </Button>
       </Container>  

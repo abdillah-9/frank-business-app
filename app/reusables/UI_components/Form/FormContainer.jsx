@@ -1,7 +1,6 @@
 "use client"
 import { useDispatch} from "@node_modules/react-redux/dist/react-redux";
 import { createContext, useContext, useState} from "react";
-import { setReduxState } from "@app/provider/redux/reducer";
 import { useForm } from "@node_modules/react-hook-form";
 
 //Step .1 create context API
@@ -9,21 +8,21 @@ const FormContext = createContext();
 
 //Step .2 define the parent component with states if are needed
 const FormContainer = ({children,formContainer,formSubmit,onError, handleClose})=>{
-
-    // Lets dispatch redux that controls overlay
-    let dispatch = useDispatch();
     
     // Import conf of react hook form
-    const {register, handleSubmit, setValue} = useForm();
+    const {register, handleSubmit, setValue, reset} = useForm();
 
-    formSubmit; // On correct form submition
+    function onSubmitData(data){
+        formSubmit(data) // On correct form submition
+        reset(); //reset form fields
+    }
+
     onError; // If errors occur in input fields
 
     // The end
-
     return(
         <FormContext value={{handleClose, register, setValue}}>
-            <form style={formContainer} onSubmit={handleSubmit(formSubmit, onError)} 
+            <form style={formContainer} onSubmit={handleSubmit(onSubmitData, onError)} 
             onClick={(e)=>e.stopPropagation()}>
                 {children}
             </form>
@@ -51,7 +50,7 @@ const Header = ({children, formHeader})=>{
 //Here We define FormModel.Text
 const Text = ({
     fieldName="", text="",type="text",inputStyle="",
-     validation="",disable=false,placeholder=""
+    validation="",disable=false,placeholder=""
     })=>{
     const {register} = useContext(FormContext);
     return(
@@ -92,7 +91,7 @@ const Date = ({inputStyle, date, fieldName, validation})=>{
 const Select = ({children,fieldName, selected, inputStyle, validation=""})=>{
     const {register} = useContext(FormContext);
     return(
-    <select style={inputStyle} defaultValue={selected} {...register(fieldName,{
+    <select style={inputStyle} value={selected} {...register(fieldName,{
         validate: validation,
     })}> {children}</select>
 
@@ -150,20 +149,19 @@ const File = ({fileName, children,images: imageUrl, fStyles, validation})=>{
       console.log("file false");
       if (file) {
         setFileName(file.name);  // Set the file name once it's selected
-        setValue("photo", [file]),
+        setValue(fileName, file),
         console.log("file true");
       }
     };
 
-    if(imageUrl.includes("http")){
+    if(imageUrl?.includes("http")){
     const url = new URL(imageUrl);
     imageName = url.pathname.split('/').pop();
     }
-    else if(!imageUrl.includes("http")){
+    else if(!imageUrl?.includes("http")){
         imageName = "No file chosen";
     }
   
-  console.log(fileName);
     return(
         <>
         <input id="file" type="file" style={{display:"none"}} accept="image/*" {...register(fileName,{

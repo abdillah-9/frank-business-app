@@ -29,12 +29,15 @@ export async function deleteBudgetData(id){
 //Insert data
 export async function insertBudgetData(newBudget){
     console.log("budget inserted "+JSON.stringify(newBudget))
+
+    //destructure newBudget to remove id
+    const {id, ...withoutID} = newBudget;
     
     const { data, error } = await supabase1
     .from('budget')
     .insert([
       { 
-        ...newBudget
+        ...withoutID
         },
     ])
     .select()          

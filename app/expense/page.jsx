@@ -15,10 +15,15 @@ import { getExpenseData } from '@utils/apiExpense'
 import { useCreateExpense } from './expenseHooks/useCreateExpense'
 import useUser from '@app/authentication/hooks/useUser'
 import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner'
+import DeletePrompt from '@app/reusables/UI_components/deletePrompt'
+import { useDeleteFormData } from './expenseHooks/useDeleteExpense'
+import { useUpdateFormData } from './expenseHooks/useUpdateExpense'
 
 export default function page() {
   //Using React Query to fetch data from supabase
     const {insertDataMutation} = useCreateExpense();
+    const {updateDataMutation} = useUpdateFormData();
+    const {mutateDeleting} = useDeleteFormData();
     const {user} = useUser();
   
     if(!user){
@@ -41,12 +46,14 @@ export default function page() {
   const overlayState = useSelector((store)=>store.ReduxState.overlay);
 
   function showFormHandler(){
-    dispatch(setReduxState({showForm: !formState, overlay: !overlayState}));
+    dispatch(setReduxState({showForm: !formState, overlay: !overlayState, fetchedFormData: false}));
   }
 
   return (
     <div style={expensContainer}>
-      <Form budget={budget} user={user} insertDataMutation={insertDataMutation}/>
+      <Form budget={budget} user={user} insertDataMutation={insertDataMutation}
+       updateDataMutation={updateDataMutation}/>
+      <DeletePrompt mutateDeleting={mutateDeleting}/>
       <Container>
         <Texts textStyle={headingStyle}>All expenses</Texts>
         <Container containerStyle={buttonsContainer}>

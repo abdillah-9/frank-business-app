@@ -10,7 +10,7 @@ const Overlay = () => {
   const dispatch = useDispatch();
 
   function handleClick(){
-      dispatch(setReduxState({overlay: false, showNavBar: false, showForm: false}))
+      dispatch(setReduxState({overlay: false, showNavBar: false, showForm: false, deleteData:false}))
   }
 
   if(overlay == false){

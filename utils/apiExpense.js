@@ -29,9 +29,13 @@ export async function deleteExpenseData(id){
 //Insert data
 export async function insertExpenseData(newExpense){
     console.log("Expense inserted "+JSON.stringify(newExpense))
+    console.log("Expense inserted "+newExpense.photo.name)
     
     //send data in db if photo
     if(newExpense?.photo?.name){
+        // destructure newExpense to remove id
+        const {id, ...expenseWithoutID} = newExpense 
+
         let photoName = Math.random()+"/"+newExpense.photo.name;
         let photoPath = "https://qrsfeffnfqyohagdakgd.supabase.co/storage/v1/object/public/photo/"+photoName;
       
@@ -50,7 +54,7 @@ export async function insertExpenseData(newExpense){
         .from('expense')
         .insert([
           { 
-            ...newExpense,photo:photoPath
+            ...expenseWithoutID,photo:photoPath
             },
         ])
         .select()          
@@ -64,11 +68,13 @@ export async function insertExpenseData(newExpense){
 
     else{
         //then upload data
+        // destructure newExpense to remove id
+        const {id, ...expenseWithoutID} = newExpense 
         const { data, error } = await supabase1
         .from('expense')
         .insert([
           { 
-            ...newExpense,photo:"",
+            ...expenseWithoutID,photo:"",
             },
         ])
         .select()          
@@ -83,11 +89,28 @@ export async function insertExpenseData(newExpense){
 
 //Update data
 export async function updateExpenseData(updateExpense){
+    updateExpense?.photo? console.log("photo in expense api "+JSON.stringify(updateExpense.photo)) :""
+    let photoName=""; let photoPath="";
+
+    if(updateExpense.photo.name){
+        photoName = Math.random()+"/"+updateExpense.photo.name;
+        photoPath = "https://qrsfeffnfqyohagdakgd.supabase.co/storage/v1/object/public/photo/"+photoName;
+
+        //Send photo in photo store
+        const { error: storageError } = await supabase1.storage
+        .from("photo")
+        .upload(photoName, updateExpense.photo);
+      
+        if (storageError) {
+            console.error("Error uploading photo:", storageError);
+            return storageError; 
+        } 
+    }
 
     const { data, error } = await supabase1
     .from('expense')
     .update(
-        {...updateExpense}
+        {...updateExpense, photo:photoPath}
     )
     .eq("id" , updateExpense.id)
     .select()       
