@@ -7,8 +7,10 @@ import Icon from '@app/reusables/UI_components/Icon';
 import { RiCameraOffLine } from '@node_modules/react-icons/ri';
 import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner';
 import { HiOutlinePencil, HiOutlineTrash } from '@node_modules/react-icons/hi2';
+import { setReduxState } from '@app/provider/redux/reducer';
+import { useDispatch } from '@node_modules/react-redux/dist/react-redux';
 
-export default function Table({expense, budget, user}) {
+export default function Table({expense, user}) {
   //CSS
   const unConfirmed = {
     backgroundColor:"rgba(204, 7, 7, 0.37)",
@@ -24,6 +26,16 @@ export default function Table({expense, budget, user}) {
     return <LoadingSpinner/>
   }
 
+  const dispatch = useDispatch();
+    function deleteAction(rowID){
+      dispatch(setReduxState({deleteData:true,overlay:true, showNavBar: false, fetchedFormData: rowID}))
+    }
+
+    function editAction(expenseRow){
+      dispatch(setReduxState({showForm: true, overlay: true ,fetchedFormData: expenseRow}))
+      console.log("fetchedFormData after clicking edit icon "+JSON.stringify(expenseRow))
+    }
+  
   return (
         <TableContainer styleTable={tableContainer}>
           <THead>
@@ -43,15 +55,11 @@ export default function Table({expense, budget, user}) {
                 <TR key={expenseRow.id} styleTR={tRow}>
                   <TD styleTD={tCell}>
                     {
-                      photo = expenseRow.photo
-                    }
-                    {
-                      photo ? 
+                      expenseRow.photo.includes("http") ? 
                       <Image src={expenseRow.photo}             
                       width={50} height={40} alt={"photo"}/>
                       : <Icon iconStyle={iconStyle}><RiCameraOffLine/></Icon>
                     }
-
                   </TD>
                   <TD styleTD={tCell}>{expenseRow.name}</TD>
                   <TD styleTD={tCell}>{expenseRow.description}</TD>
@@ -62,11 +70,15 @@ export default function Table({expense, budget, user}) {
                   </TD>
                   <TD styleTD={tCell}>{expenseRow.date}</TD>
                   <TD styleTD={tCellActions}>
-                    <Icon><HiOutlinePencil/></Icon>
-                    <Icon><HiOutlineTrash/></Icon>
+                    <Icon clickAction={()=>editAction(expenseRow)} title={"edit"}>
+                      <HiOutlinePencil/>
+                    </Icon>
+                    <Icon clickAction={()=>deleteAction(expenseRow.id)} title={"delete"}>
+                      <HiOutlineTrash/>
+                    </Icon>
                   </TD>
                 </TR>
-            ) : <TR><TD>Data not found</TD></TR>}
+            ) : <TR><TD styleTD={dataNotFound}><LoadingSpinner/></TD></TR>}
             
            </TBody>
         </TableContainer>
@@ -112,5 +124,9 @@ const status={
 const iconStyle={
   fontSize:"25px",
   color:"rgba(53, 44, 65, 0.67)",
+}
+const dataNotFound={
+  display:"flex",
+  alignItems:"center",
 }
 

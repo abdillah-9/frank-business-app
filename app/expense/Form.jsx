@@ -5,28 +5,39 @@ import FormContainer from '@app/reusables/UI_components/Form/FormContainer'
 import { HiXCircle } from '@node_modules/react-icons/hi2';
 import { useDispatch, useSelector } from '@node_modules/react-redux/dist/react-redux';
 import React from 'react'
-import { useCreateExpense } from './expenseHooks/useCreateExpense';
 import toast from '@node_modules/react-hot-toast/dist';
-import useUser from '@app/authentication/hooks/useUser';
 
-export default function Form({budget, insertDataMutation, user}) {
-  let id;let amount; let name;let description; let dateCreated;let images="";let fetchedFormData=false; 
+export default function Form({budget, insertDataMutation, updateDataMutation, user}) {
+  let id;let userID;let amount; let name;let description; let date;let photo="";let budgetID;
 
+  const {windowSize} = useWindowSize()
   const formState = useSelector((store)=>store.ReduxState.showForm);
+  const newData = useSelector((store)=>store.ReduxState.fetchedFormData); 
   const dispatch = useDispatch();
+
   function handleShowForm(){
     dispatch(setReduxState({overlay: false, showForm: false}));
   }
 
-  if(user){
-    id = user.id || "";
+  if(!user || !formState){
+    return
   }  
+
+  if(newData){
+    ({id,amount,name,description,date,photo,budgetID} = newData)
+  }
+  userID = user.id;
 
   function formSubmit(data){
     user? console.log("userID"+ JSON.stringify(data)) :""
+    user? console.log("my photo"+data.photo):""
 
+    newData ?
+    updateDataMutation({
+      ...data
+    })  :
     insertDataMutation({
-      ...data,userID:id,
+      ...data
     })
     dispatch(setReduxState({showForm: false, overlay:false}));
   }
@@ -38,7 +49,7 @@ export default function Form({budget, insertDataMutation, user}) {
       errors?.status?.message?  errors.status.message :
       errors?.description?.message?  errors.description.message :
       errors?.images?.message? errors.images.message :
-      errors?.dateCreated?.message?  errors.dateCreated.message :""
+      errors?.date?.message?  errors.date.message :""
     )
   }
 
@@ -59,7 +70,6 @@ export default function Form({budget, insertDataMutation, user}) {
     zIndex:2,
   }
 
-  const {windowSize} = useWindowSize()
   const formRow={
     width: windowSize.windowWidth >= 768 ? "50%" : "100%",
     height:"60px",
@@ -78,7 +88,8 @@ export default function Form({budget, insertDataMutation, user}) {
           <HiXCircle/>
         </FormContainer.Icon>
       </FormContainer.SubmitRow>
-      <FormContainer.Text text={id} inputStyle={idStyle} fieldName={"userID"}/>
+      <FormContainer.Text text={id} inputStyle={idStyle} fieldName={"id"}/>
+      <FormContainer.Text text={userID} inputStyle={idStyle} fieldName={"userID"}/>
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}> name </FormContainer.Label>
@@ -94,8 +105,8 @@ export default function Form({budget, insertDataMutation, user}) {
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}> date </FormContainer.Label>
-        <FormContainer.Date inputStyle={inputStyle} fieldName={"date"}  date={dateCreated}  
-          validation={validateDateCreated}/>
+        <FormContainer.Date inputStyle={inputStyle} fieldName={"date"}  date={date}  
+          validation={validatedate}/>
       </FormContainer.Row>
 
       <FormContainer.Row formRow={formRow}>
@@ -108,7 +119,8 @@ export default function Form({budget, insertDataMutation, user}) {
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}>budget name</FormContainer.Label>
-        <FormContainer.Select inputStyle={inputStyle} fieldName={"budgetID"} validation={validateBudget}> 
+        <FormContainer.Select inputStyle={inputStyle} fieldName={"budgetID"} 
+        selected={budgetID} validation={validateBudget}> 
           <FormContainer.Option optionValue={""}></FormContainer.Option>
         {
           budget ? budget.map(budgetRow=> 
@@ -123,7 +135,7 @@ export default function Form({budget, insertDataMutation, user}) {
       <FormContainer.Row formRow={{...formRow, height:"fit-content"}}>
         <FormContainer.Label labelStyle={labelStyle}>Photo </FormContainer.Label>
         <FormContainer.File fStyles={[fileStyle, fileStyleSpan]} fileName={"photo"} 
-          images={images} validation={validateFile}>
+          images={photo} validation={validateFile}>
             Choose file
         </FormContainer.File>
       </FormContainer.Row>
@@ -137,7 +149,7 @@ export default function Form({budget, insertDataMutation, user}) {
       <FormContainer.SubmitRow submitRow={submitRow}>
         <FormContainer.Cancel cancelStyle={cancelStyle}>Cancel</FormContainer.Cancel>
         <FormContainer.Submit submitButton={submitButton}>
-          {fetchedFormData? "Update expense" : "Create expense" }
+          {newData? "Update expense" : "Create expense" }
         </FormContainer.Submit>
         
       </FormContainer.SubmitRow>
@@ -279,7 +291,7 @@ function validateAmount(values){
   return true; // Return true if validation passes 
 }
 
-function validateDateCreated(values){
+function validatedate(values){
    // Check if the value is empty or contains only spaces
    if (!values || values.trim() === "") {
     return "start-date is required";

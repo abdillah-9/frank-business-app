@@ -9,6 +9,8 @@ const initialStates = {
     fetchedFormData: false,
     showNavBar:false,
     showForm:false,
+    deleteData:false,
+    
 }
 
 const reducerFunc = createSlice(
@@ -23,6 +25,7 @@ const reducerFunc = createSlice(
                     fetchedFormData: action.payload.fetchedFormData ?? state.fetchedFormData,
                     showNavBar: action.payload.showNavBar ?? state.showNavBar,
                     showForm:action.payload.showForm ?? state.showForm,
+                    deleteData:action.payload.deleteData ?? state.deleteData,
                 };
             },
         }

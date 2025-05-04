@@ -3,6 +3,7 @@ import supabase1 from "./supabase";
 export async function SignUp(userData){
 
   const {fullName,email,password,avatar} = userData;
+  console.log("avatar in auth "+avatar.name)
 
   //Create file name if avatar is not ""
   if(avatar){

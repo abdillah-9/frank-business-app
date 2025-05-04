@@ -16,7 +16,7 @@ export default function Form() {
   const {user} = useUser();
   let id = "";
   let password = "";
-  let images = ""
+  //let  = ""
   let email = "";
   let avatar = "";
   let fullName = "";
@@ -42,11 +42,7 @@ export default function Form() {
   function formSubmit(data){
     user? console.log("user data"+ JSON.stringify(data)) :""
 
-    updateUser({    
-      id,
-      email,
-      fullName,
-      password, ...data, avatar: avatar? data.avatar[0] :""})
+    updateUser({...data})
     dispatch(setReduxState({showForm: false, overlay:false}));
   }
 
@@ -117,8 +113,8 @@ export default function Form() {
 
       <FormContainer.Row formRow={{...formRow, height:"fit-content"}}>
         <FormContainer.Label labelStyle={labelStyle}>Avatar </FormContainer.Label>
-        <FormContainer.File fStyles={[fileStyle, fileStyleSpan]} fileName={"images"} 
-          images={images} validation={validateFile}>
+        <FormContainer.File fStyles={[fileStyle, fileStyleSpan]} fileName={"avatar"} 
+          images={avatar} validation={validateFile}>
             Choose file
         </FormContainer.File>
       </FormContainer.Row>

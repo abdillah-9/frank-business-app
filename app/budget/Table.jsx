@@ -1,10 +1,12 @@
 "use client"
 import useUser from '@app/authentication/hooks/useUser';
+import { setReduxState } from '@app/provider/redux/reducer';
 import Icon from '@app/reusables/UI_components/Icon';
 import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner';
 import TableContainer, { TBody,THead,TH,TR,TD } from '@app/reusables/UI_components/Table/TableContainer'
 import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy';
 import { HiOutlinePencil, HiOutlineTrash } from '@node_modules/react-icons/hi2';
+import { useDispatch } from '@node_modules/react-redux/dist/react-redux';
 import { getBudgetData } from '@utils/apiBudget';
 import React from 'react'
 
@@ -15,14 +17,23 @@ export default function Table() {
     queryFn: getBudgetData
   });
 
+  const dispatch = useDispatch();
   const {user} = useUser();
-  let id = "";
+  let id = "";let rowID="";
 
   if (!user) {
   return <LoadingSpinner />;
   }
   if(user){
     id = user.id || "";
+  }
+  
+  function deleteAction(rowID){
+    dispatch(setReduxState({deleteData:true,overlay:true, showNavBar: false, fetchedFormData: rowID}))
+  }
+  function editAction(budgetRow){
+    dispatch(setReduxState({showForm: true, overlay: true ,fetchedFormData: budgetRow}))
+    console.log("fetchedFormData after clicking edit icon "+JSON.stringify(budgetRow))
   }
 
 //CSS 
@@ -71,11 +82,15 @@ const upcoming = {
                   <TD styleTD={tCell}>{budgetRow.startDate}</TD>
                   <TD styleTD={tCell}>{budgetRow.endDate}</TD>
                   <TD styleTD={tCellActions}>
-                    <Icon><HiOutlinePencil/></Icon>
-                    <Icon><HiOutlineTrash/></Icon>
+                    <Icon clickAction={()=>editAction(budgetRow)} title={"edit"}>
+                      <HiOutlinePencil/>
+                    </Icon>
+                    <Icon clickAction={()=>deleteAction(budgetRow.id)} title={"delete"}>
+                      <HiOutlineTrash/>
+                    </Icon>
                   </TD>
                 </TR>
-              ) : <TR><TH>No data found</TH></TR>}
+              ) : <TR><TH styleTH={dataNotFound}><LoadingSpinner/></TH></TR>}
             
            </TBody>
         </TableContainer>
@@ -116,5 +131,9 @@ const status={
   fontWeight:500,
   fontSize:"13px",
   width:"fit-content"
+}
+const dataNotFound={
+  display:"flex",
+  justifyContent:"center",
 }
 
