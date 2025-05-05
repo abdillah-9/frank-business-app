@@ -56,7 +56,7 @@ export default function Table({expense, user}) {
                   <TD styleTD={tCell}>
                     {
                       expenseRow.photo.includes("http") ? 
-                      <Image src={expenseRow.photo}             
+                      <img src={expenseRow.photo}             
                       width={50} height={40} alt={"photo"}/>
                       : <Icon iconStyle={iconStyle}><RiCameraOffLine/></Icon>
                     }
