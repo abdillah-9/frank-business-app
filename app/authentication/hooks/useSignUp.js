@@ -1,3 +1,4 @@
+"use client"
 import { useMutation } from "@node_modules/@tanstack/react-query";
 import toast from "@node_modules/react-hot-toast/dist";
 import { SignUp as SignUpApi } from "@utils/apiAuth";
@@ -11,8 +12,8 @@ export default function useSignUp(){
         onSuccess:(user)=>{
             console.log(user)
             toast.success("New user successfully created")    
-            // //Redirect to signIn
-            // routing.push("/authentication/signIn");         
+            //Redirect to signIn
+            routing.push("/authentication/signIn");         
         },
         onError:(error)=>{
             console.log("SignUpError :"+error);
