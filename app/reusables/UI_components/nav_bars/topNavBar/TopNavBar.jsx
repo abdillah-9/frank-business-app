@@ -31,7 +31,7 @@ export default function TopNavBar() {
     src:avatar? avatar : "/assets/images/logo.svg",
     width:30,
     height:30,
-    alt:"user photo",
+    alt:"",
   }
 
   const {logOut} = useLogOut();
