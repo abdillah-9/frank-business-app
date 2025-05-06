@@ -24,7 +24,7 @@ export default function Table() {
                   <TD styleTD={tCell}>
                     {
                       avatar ? 
-                      <Image src={avatar} width={50} height={40} alt={"photo"}/>
+                      <img src={avatar} width={50} height={40} alt={"photo"}/>
                       : <Icon iconStyle={iconStyle}><RiCameraOffLine/></Icon>
                     }
                   </TD>

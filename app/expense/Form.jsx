@@ -123,7 +123,7 @@ export default function Form({budget, insertDataMutation, updateDataMutation, us
         selected={budgetID} validation={validateBudget}> 
           <FormContainer.Option optionValue={""}></FormContainer.Option>
         {
-          budget ? budget.map(budgetRow=> 
+          budget ? budget.filter(exp => exp.userID === user.id).map(budgetRow=> 
             <FormContainer.Option optionValue={budgetRow.id} key={budgetRow.id}>
               {budgetRow.name}
             </FormContainer.Option>
