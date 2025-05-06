@@ -10,7 +10,7 @@ import { HiOutlinePencil, HiOutlineTrash } from '@node_modules/react-icons/hi2';
 import { setReduxState } from '@app/provider/redux/reducer';
 import { useDispatch } from '@node_modules/react-redux/dist/react-redux';
 
-export default function Table({expense, user}) {
+export default function Table({expense, user, budget}) {
   //CSS
   const unConfirmed = {
     backgroundColor:"rgba(204, 7, 7, 0.37)",
@@ -42,6 +42,7 @@ export default function Table({expense, user}) {
             <TR styleTR={{...tRow,...headerRow}}>
               <TH styleTH={tCell}>PHOTO</TH>
               <TH styleTH={tCell}>NAME</TH>
+              <TH styleTH={tCell}>BUDGET</TH>
               <TH styleTH={tCell}>DESCRIPTION</TH>
               <TH styleTH={tCell}>AMOUNT</TH>
               <TH styleTH={tCell}>STATUS</TH>
@@ -62,6 +63,11 @@ export default function Table({expense, user}) {
                     }
                   </TD>
                   <TD styleTD={tCell}>{expenseRow.name}</TD>
+                  <TD styleTD={tCell}>
+                    {
+                    budget? budget.filter((budg)=>budg.id === expenseRow.budgetID).map((budgetRow)=>budgetRow.name) :""
+                    }
+                  </TD>
                   <TD styleTD={tCell}>{expenseRow.description}</TD>
                   <TD styleTD={tCell}>{expenseRow.amount+"TSh"}</TD>
                   <TD styleTD={tCell}>
