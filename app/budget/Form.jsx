@@ -102,7 +102,7 @@ export default function Form({insertDataMutation, updateDataMutation, user}) {
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}>status</FormContainer.Label>
-        <FormContainer.Select inputStyle={inputStyle} fieldName={"status"} selected={status}> 
+        <FormContainer.Select inputStyle={inputStyle} fieldName={"status"} > 
           <FormContainer.Option optionValue={"active"}>active</FormContainer.Option>
           <FormContainer.Option optionValue={"expired"}>expired</FormContainer.Option>
           <FormContainer.Option optionValue={"upcoming"}>upcoming</FormContainer.Option>
@@ -111,7 +111,7 @@ export default function Form({insertDataMutation, updateDataMutation, user}) {
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}>category</FormContainer.Label>
-        <FormContainer.Select inputStyle={inputStyle} fieldName={"category"} selected={category}> 
+        <FormContainer.Select inputStyle={inputStyle} fieldName={"category"} > 
           <FormContainer.Option optionValue={"food"}>food</FormContainer.Option>
           <FormContainer.Option optionValue={"transport"}>transport</FormContainer.Option>
           <FormContainer.Option optionValue={"clothes"}>clothes</FormContainer.Option>

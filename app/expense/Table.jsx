@@ -1,7 +1,6 @@
 "use client"
 import TableContainer, { TBody,THead,TH,TR,TD } from '@app/reusables/UI_components/Table/TableContainer'
 import Image from '@node_modules/next/image';
-import {MdOutlineNoPhotography} from "react-icons/md"
 import React from 'react'
 import Icon from '@app/reusables/UI_components/Icon';
 import { RiCameraOffLine } from '@node_modules/react-icons/ri';
@@ -9,8 +8,11 @@ import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner';
 import { HiOutlinePencil, HiOutlineTrash } from '@node_modules/react-icons/hi2';
 import { setReduxState } from '@app/provider/redux/reducer';
 import { useDispatch } from '@node_modules/react-redux/dist/react-redux';
+import toast from '@node_modules/react-hot-toast/dist';
+import { IoWarning } from '@node_modules/react-icons/io5';
 
 export default function Table({expense, user, budget}) {
+
   //CSS
   const unConfirmed = {
     backgroundColor:"rgba(204, 7, 7, 0.37)",
@@ -20,11 +22,33 @@ export default function Table({expense, user, budget}) {
     backgroundColor:"rgba(3, 196, 67, 0.37)",
     color:"rgb(6, 43, 1)",
   }
+  const exceeded={
+    color:"rgba(160, 3, 3, 0.86)",
+    fontWeight:500,
+    display:"flex",
+    gap:"5px",
+    alignItems:"center",
+  }
+  const warningIcon={
+    fontSize:"23px",
+    cursor:"pointer",
+  }
 
-  let photo=""
   if (!user){
     return <LoadingSpinner/>
   }
+
+  let expenseTotalById="";
+  if(expense){
+    expenseTotalById = expense.filter((expenseRow)=>expenseRow.userID === user.id).reduce(
+      (acc, expense)=>{
+        if(!acc[expense.budgetID]){ acc[expense.budgetID] = 0 }
+        acc[expense.budgetID]+= expense.amount
+        return acc
+      },{}
+    )
+  }
+  console.log("THis is expensivTatoalByID "+JSON.stringify(expenseTotalById))
 
   const dispatch = useDispatch();
     function deleteAction(rowID){
@@ -34,6 +58,9 @@ export default function Table({expense, user, budget}) {
     function editAction(expenseRow){
       dispatch(setReduxState({showForm: true, overlay: true ,fetchedFormData: expenseRow}))
       console.log("fetchedFormData after clicking edit icon "+JSON.stringify(expenseRow))
+    }
+    function exceededPrompt(){
+      toast.error("expenses have exceeded this budget");
     }
   
   return (
@@ -51,7 +78,7 @@ export default function Table({expense, user, budget}) {
             </TR>
           </THead>
            <TBody>
-            {
+            {  
               expense ? expense.filter(exp => exp.userID === user.id).map(expenseRow=>
                 <TR key={expenseRow.id} styleTR={tRow}>
                   <TD styleTD={tCell}>
@@ -65,7 +92,20 @@ export default function Table({expense, user, budget}) {
                   <TD styleTD={tCell}>{expenseRow.name}</TD>
                   <TD styleTD={tCell}>
                     {
-                    budget? budget.filter((budg)=>budg.id === expenseRow.budgetID).map((budgetRow)=>budgetRow.name) :""
+                      budget? 
+                      budget.filter((budg)=>budg.id === expenseRow.budgetID)
+                      .map((budgetRow)=>{
+                        const isExceeded = expenseTotalById[budgetRow.id] > budgetRow.amount;
+                        return(
+                          <div key={budgetRow.id} style={isExceeded? exceeded:{}}>
+                            <span>{budgetRow.name}</span>
+                            <Icon iconStyle={isExceeded? warningIcon : {display:"none"}} 
+                            className={"warningAnime"} clickAction={exceededPrompt}>
+                              <IoWarning/>
+                            </Icon>
+                          </div>
+                        )
+                      }) :""
                     }
                   </TD>
                   <TD styleTD={tCell}>{expenseRow.description}</TD>
@@ -84,7 +124,8 @@ export default function Table({expense, user, budget}) {
                     </Icon>
                   </TD>
                 </TR>
-            ) : <TR><TD styleTD={dataNotFound}><LoadingSpinner/></TD></TR>}
+            ) : <TR><TD styleTD={dataNotFound}><LoadingSpinner/></TD></TR>
+            }
             
            </TBody>
         </TableContainer>

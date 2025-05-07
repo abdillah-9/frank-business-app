@@ -3,79 +3,103 @@ import React, { useState, useEffect } from 'react';
 import DashbordContainer, 
 { Statistic, StatisticDesc, StatisticGraph, StatisticIcon, StatisticsContainer, StatisticTitle }
   from './DashboardContainer';
-import { GiReceiveMoney, GiPayMoney } from '@node_modules/react-icons/gi';
+import { GiReceiveMoney, GiPayMoney, GiTakeMyMoney } from '@node_modules/react-icons/gi';
 import DashboardFilter from './DashboardFilter';
-import { getExpenditureData } from '@utils/apiExpenditure';
+import { getExpenseData } from '@utils/apiExpense';
 import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy';
-import { getTaskData } from '@utils/apiTasks';
-import LoadingSpinner from '@app/UI components/LoadingSpinner';
+import { getBudgetData } from '@utils/apiBudget';
+import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner';
 import { BsMenuButtonFill, BsMenuButtonWideFill } from '@node_modules/react-icons/bs';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis }
   from '@node_modules/recharts';
 
-export default function ManagerDashbord() {
+export default function ManagerDashbord({user}) {
 
   const [statsDuration, setStatsDuration] = useState("All");
   
   // State to hold stats
   const [stats, setStats] = useState({
-    totalPendingTasks: 0,
-    totalCompletedTasks: 0,
-    totalExpenditureCost: 0,
-    totalCompletedPayment: 0,
-    tasksIsLoading: true,
-    expenditureIsLoading: true,
+    totalBudgetsNotExceeded:0,
+    totalBudgetsExceeded: 0,
+    totalActiveBudget: 0,
+    totalConfirmedExpenses: 0,
+    expenseIsLoading: true,
+    budgetIsLoading: true,
     combinedData:[{}],
   });
 
-  // Fetch expenditures
-  const { isLoading: expenditureIsLoading, data: expenditureData } = useQuery({
-    queryKey: ['expenditureData'],
-    queryFn: getExpenditureData,
+  // Fetch expense
+  const { isLoading: expenseIsLoading, data: expenseData } = useQuery({
+    queryKey: ['expenseData'],
+    queryFn: getExpenseData,
   });
 
   // Fetch tasks
-  const { isLoading: tasksIsLoading, data: tasksData } = useQuery({
-    queryKey: ['taskData'],
-    queryFn: getTaskData,
+  const { isLoading: budgetIsLoading, data: budgetData } = useQuery({
+    queryKey: ['budgetData'],
+    queryFn: getBudgetData,
   });
 
+  //calculate total expense for each budget
+  let expenseTotalById="";
+  if(expenseData){
+    expenseTotalById = expenseData.filter((expenseRow)=>expenseRow.userID === user.id).reduce(
+      (acc, expenseData)=>{
+        if(!acc[expenseData.budgetID]){ acc[expenseData.budgetID] = 0 }
+        acc[expenseData.budgetID]+= expenseData.amount
+        return acc
+      },{}
+    )
+  }
+
   useEffect(() => {
-    if (tasksData && expenditureData) {
+    if (budgetData && expenseData) {
       if (statsDuration === "All") {
-        const totalExpenditureCost = expenditureData?.reduce((total, item) => 
-          total + (item.cost || 0), 0);
-        const totalCompletedPayment = tasksData?.reduce((total, item) =>
-           item.status === "completed" ? total + (parseFloat(item.payment) || 0) : total, 0);
-        const totalCompletedTasks = tasksData?.reduce((total, item) =>
+        const totalActiveBudget = budgetData?.filter((row)=>row.userID === user.id)
+        .reduce((total, item) => 
+          item.status === "active" ? total + (item.amount || 0) : total, 0);
+        const totalConfirmedExpenses = expenseData?.filter((row)=>row.userID === user.id)
+        .reduce((total, item) =>
+           item.status === "confirmed" ? total + (parseFloat(item.amount) || 0) : total, 0);
+        const totalBudgetsExceeded = budgetData?.reduce((total, item) =>
            item.status === "completed" ? total + 1 : total, 0);
-        const totalPendingTasks = tasksData?.reduce((total, item) =>
+        const totalPendingTasks = budgetData?.reduce((total, item) =>
            item.status === "pending" ? total + 1 : total, 0);
+        // 5. Calculate confirmed expenses per budget (for current user)
+      const expenseTotalByBudget = expenseData
+      .filter(item => item.status === "confirmed" && item.userID === user.id)
+      .reduce((acc, expenseData) => {
+        if (!acc[expenseData.budgetID]) acc[expenseData.budgetID] = 0;
+        acc[expenseData.budgetID] += parseFloat(expenseData.amount) || 0;
+        return acc;
+      }, {});
 
-        //Calculate combinedData
-        // Filter tasksData to include only completed tasks
-        const completedTasksData = tasksData.filter(task => task.status === "completed");
+      // 6. Count budgets exceeded vs not exceeded
+      let budgetsExceeded=0;
+      let budgetsNotExceeded=0;
+      budgetData.filter((row)=>row.userID == user.id && row.status == "active")
+      .forEach(budget => {
+      const budgetAmount = parseFloat(budget.amount) || 0;
+      const spent = expenseTotalByBudget[budget.id] || 0;
 
-        const maxLength = Math.max(expenditureData.length, completedTasksData.length);
+      if (spent > budgetAmount) {
+        budgetsExceeded++;
+      } else {
+        budgetsNotExceeded++;
+      }})
 
-        const combinedData = Array.from({ length: maxLength }, (_, index) => ({
-          ...expenditureData[index],  // Handle missing values gracefully
-          ...completedTasksData[index]
-        }));
-        
-        const sortedCombinedData = combinedData.sort((a, b) => 
-          new Date(a.created_at) - new Date(b.created_at));
-
-        console.log("combinedData :"+JSON.stringify(combinedData));
-        console.log("sortedCombinedData :"+JSON.stringify(sortedCombinedData));
+        //Calculate combineddata
+        let sortedCombinedData = [...expenseData]
+        .filter(exp => exp.userID === user.id)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));  
         
         setStats({
-          totalPendingTasks,
-          totalCompletedTasks,
-          totalExpenditureCost,
-          totalCompletedPayment,
-          tasksIsLoading,
-          expenditureIsLoading,
+          totalBudgetsNotExceeded:budgetsNotExceeded,
+          totalBudgetsExceeded:budgetsExceeded,
+          totalActiveBudget,
+          totalConfirmedExpenses,
+          expenseIsLoading,
+          budgetIsLoading,
           combinedData:sortedCombinedData,
         });
       }
@@ -86,90 +110,88 @@ export default function ManagerDashbord() {
         const currentMonthYearIso = currentDate.toISOString();
         const currentMonthYear = currentMonthYearIso.slice(0, 7); 
 
-        //Total Expenditure Cost
-        const totalExpenditureCost = expenditureData?.reduce((total, item) => {
-
-          const itemMonthYear = item.date.slice(0,7);
+        //Total active budgets
+        const totalActiveBudget = budgetData?.filter((budgetRow)=>budgetRow.userID == user.id)
+        .reduce((total, item) => {
+          const itemMonthYear = item.startDate.slice(0,7);
 
           console.log("ItemMonthYear is"+itemMonthYear);
           console.log("currentMonthYear is"+currentMonthYear);
 
           if (itemMonthYear == currentMonthYear) {
-            return total + (item.cost || 0);  
+            return total + (item.amount || 0);  
           }
           return total; 
         }, 0); 
 
-        console.log("Total expenditure cost"+totalExpenditureCost);
+        console.log("Total expenditure cost"+totalActiveBudget);
         
-        //Total Completed payments
-        const totalCompletedPayment = tasksData?.reduce((total, item) => {
+        //Total Confrmed expenses
+        const totalConfirmedExpenses = expenseData?.filter((row)=>row.userID == user.id)
+        .reduce((total, item) => {
 
-          const itemMonthYear = item.startDate.slice(0,7);
+          const itemMonthYear = item.date.slice(0,7);
 
-          if (itemMonthYear == currentMonthYear && item.status == "completed") {
-            return total + (parseFloat(item.payment) || 0);  
+          if (itemMonthYear == currentMonthYear && item.status == "confirmed") {
+            return total + (parseFloat(item.amount) || 0);  
           }
           return total; 
         }, 0);
 
-        //Total Completed Tasks
-        const totalCompletedTasks = tasksData?.reduce((total, item) =>{ 
+        //get number of exceeded and not exceeded budgets
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const expenseTotalByBudget = expenseData
+          .filter(item => {
+          const itemDate = new Date(item.date); 
+          return (
+            item.status === "confirmed" &&
+            item.userID === user.id &&
+            itemDate >= startOfMonth &&
+            itemDate <= now
+          );
+        }).reduce((acc, expenseData) => {
+            if (!acc[expenseData.budgetID]) acc[expenseData.budgetID] = 0;
+            acc[expenseData.budgetID] += parseFloat(expenseData.amount) || 0;
+            return acc;
+        }, {});
+      // Now end it -> count budgets exceeded vs not exceeded
+      let budgetsExceeded=0;
+      let budgetsNotExceeded=0;
+      budgetData.filter((row)=>row.userID == user.id && row.status == "active")
+      .forEach(budget => {
+      const budgetAmount = parseFloat(budget.amount) || 0;
+      const spent = expenseTotalByBudget[budget.id] || 0;
 
-          const itemMonthYear = item.startDate.slice(0,7);  
+      if (spent > budgetAmount) {
+        budgetsExceeded++;
+      } else {
+        budgetsNotExceeded++;
+      }})
 
-          if(itemMonthYear == currentMonthYear && item.status == "completed"){
-            return ++total
-          }
-
-          return total;
-        }, 0);
-
-        //Total Pending Tasks
-        const totalPendingTasks = tasksData?.reduce((total, item) => {
-
-          const itemMonthYear = item.startDate.slice(0,7);  
-
-          if(itemMonthYear == currentMonthYear && item.status == "pending"){
-            return ++total
-          }
-
-          return total;
-        }, 0);
 
         //Calculate combineddata
-        // Filter tasksData and expendituredata to include only completed tasks and expenditures
-        const completedMonthlyTasksData = tasksData.filter(task => task.status === "completed"
-          && task.startDate.slice(0,7) === currentMonthYear
-        );
-
-        const completedMonthlyexpenditureData = expenditureData.filter(exp=>
-          exp.date.slice(0,7) === currentMonthYear
-        )
-        const maxLength = Math.max(completedMonthlyexpenditureData.length,
-           completedMonthlyTasksData.length);
-
-        const combinedData = Array.from({ length: maxLength }, (_, index) => ({
-          ...completedMonthlyexpenditureData[index],
-          ...completedMonthlyTasksData[index]
-        }));
+        let sortedCombinedData = [...expenseData]
+        .filter(exp => exp.userID === user.id)
+        .filter(exp => exp.date.slice(0, 7) === currentMonthYear)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));      
 
         setStats({
-          totalPendingTasks,
-          totalCompletedTasks,
-          totalExpenditureCost,
-          totalCompletedPayment,
-          tasksIsLoading,
-          expenditureIsLoading,
-          combinedData,
+          totalBudgetsNotExceeded:budgetsNotExceeded,
+          totalBudgetsExceeded:budgetsExceeded,
+          totalActiveBudget,
+          totalConfirmedExpenses,
+          expenseIsLoading,
+          budgetIsLoading,
+          combinedData:sortedCombinedData,
         });
       }
     }
-  }, [statsDuration, tasksData, expenditureData, tasksIsLoading, expenditureIsLoading]);
+  }, [statsDuration, budgetData, expenseData, expenseIsLoading, budgetIsLoading]);
 
   console.log("combined  "+JSON.stringify(stats.combinedData))
-  console.log("Tasks :"+JSON.stringify(tasksData));
-  console.log("Expenditure :"+JSON.stringify(expenditureData));
+  console.log("budget :"+JSON.stringify(budgetData));
+  console.log("Expense :"+JSON.stringify(getExpenseData));
 
   return (
     <div>
@@ -191,12 +213,12 @@ export default function ManagerDashbord() {
 
           <Statistic styleStatistic={styleStatistic} boxShadow='2px 3px 15px rgb(252, 84, 84)'>
             <StatisticIcon styleStatIcon={styleStatIcon}backGrColor={"rgb(252, 84, 84)"}> 
-              <GiPayMoney/>
+              <GiTakeMyMoney />
             </StatisticIcon>
             <StatisticDesc styleStatDesc={styleStatDesc}>
-              <div style={styleName}>Expenditures</div>
+              <div style={styleName}>Total active budgets</div>
               <div style={styleValue}>
-                {stats.expenditureIsLoading ? <LoadingSpinner /> : stats.totalExpenditureCost}
+                {stats.budgetIsLoading ? <LoadingSpinner /> : stats.totalActiveBudget}
                 <span style={{ fontSize: "16px" }}> TSh</span>
               </div>
             </StatisticDesc>
@@ -204,13 +226,13 @@ export default function ManagerDashbord() {
 
           <Statistic styleStatistic={styleStatistic} boxShadow="2px 3px 15px rgb(241, 187, 7)">
             <StatisticIcon styleStatIcon={styleStatIcon} backGrColor={"rgb(241, 187, 7)"}> 
-              <GiReceiveMoney/> 
+              <GiPayMoney/>
             </StatisticIcon>
             <StatisticDesc styleStatDesc={styleStatDesc}>
-              <div style={styleName}>Income amount</div>
+              <div style={styleName}>Total confirmed expenses</div>
               <div style={styleValue}>
-                {stats.tasksIsLoading ? <LoadingSpinner /> : stats.totalCompletedPayment}
-                <span style={{ fontSize: "16px" }}> TSh</span>
+                {stats.expenseIsLoading ? <LoadingSpinner /> : stats.totalConfirmedExpenses}
+               <span style={{ fontSize: "16px" }}> TSh</span>
               </div>
             </StatisticDesc>
           </Statistic>
@@ -220,9 +242,10 @@ export default function ManagerDashbord() {
               <BsMenuButtonWideFill/>
             </StatisticIcon>
             <StatisticDesc styleStatDesc={styleStatDesc}>
-              <div style={styleName}>Completed tasks</div>
+              <div style={styleName}>Active budgets</div>
               <div style={styleValue}>
-                {stats.tasksIsLoading ? <LoadingSpinner /> : stats.totalCompletedTasks}
+                {stats.budgetIsLoading ? <LoadingSpinner /> :
+                 stats.totalBudgetsExceeded+stats.totalBudgetsNotExceeded}
               </div>
             </StatisticDesc>
           </Statistic>
@@ -232,9 +255,9 @@ export default function ManagerDashbord() {
               <BsMenuButtonFill/>
             </StatisticIcon>
             <StatisticDesc styleStatDesc={styleStatDesc}>
-              <div style={styleName}>Ongoing tasks</div>
+              <div style={styleName}>Exceeded budgets</div>
               <div style={styleValue}>
-                {stats.tasksIsLoading ? <LoadingSpinner /> : stats.totalPendingTasks}
+                {stats.budgetIsLoading ? <LoadingSpinner /> : stats.totalBudgetsExceeded}
               </div>
             </StatisticDesc>
           </Statistic>
@@ -244,9 +267,9 @@ export default function ManagerDashbord() {
         <StatisticsContainer styleStatsContainer={styleStatsContainer}>
 
         <StatisticGraph styleStatisticGraph={styleStatisticGraph}>
-          <h4 style={{fontWeight:500,fontSize:"20px"}}>EXPENDITURES PER DATE</h4>
+          <h4 style={{fontWeight:500,fontSize:"17px"}}>USER EXPENSES</h4>
           {
-          (stats.tasksIsLoading || stats.expenditureIsLoading) ? <LoadingSpinner/> :
+          (stats.expenseIsLoading || stats.budgetIsLoading) ? <LoadingSpinner/> :
 
           <ResponsiveContainer height={350} width={"90%"}>  
           <AreaChart data={stats.combinedData} style={styleAreaChart}>
@@ -258,17 +281,13 @@ export default function ManagerDashbord() {
                 <stop offset="5%" stopColor="rgb(54, 208, 4)" stopOpacity={1}/>
                 <stop offset="95%" stopColor="rgb(54, 208, 4)" stopOpacity={0.5}/>
               </linearGradient>
-              <linearGradient id="tasks" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="expens" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="50%" stopColor="rgba(6, 72, 152, 0.86)" stopOpacity={1}/>
                 <stop offset="95%" stopColor="rgba(6, 72, 152, 0.86)" stopOpacity={0.5}/>
               </linearGradient>
             </defs>
-            <Area type="monotone" dataKey="cost" strokeWidth={1}
-            stroke="rgb(54, 208, 4)" fill="url(#expenditure)" unit={"Tsh"} name="expenditure"
-            style={{color:"black"}}
-            />
-            <Area type="monotone" dataKey="payment" strokeWidth={1}
-            stroke="rgba(6, 72, 152, 0.86)" fill="url(#tasks)" unit={"Tsh"} name="daily income"
+            <Area type="monotone" dataKey="amount" strokeWidth={1}
+            stroke="rgba(6, 72, 152, 0.86)" fill="url(#expens)" unit={"Tsh"} name="amount"
             />
             <CartesianGrid strokeWidth={0.5} strokeDasharray={5}/>
           </AreaChart>
