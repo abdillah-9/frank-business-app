@@ -13,9 +13,7 @@ import { BsMenuButtonFill, BsMenuButtonWideFill } from '@node_modules/react-icon
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis }
   from '@node_modules/recharts';
 
-export default function ManagerDashbord({user}) {
-
-  const [statsDuration, setStatsDuration] = useState("All");
+export default function ManagerDashbord({user, statsDuration, setStatsDuration}) {
   
   // State to hold stats
   const [stats, setStats] = useState({
@@ -61,11 +59,7 @@ export default function ManagerDashbord({user}) {
         const totalConfirmedExpenses = expenseData?.filter((row)=>row.userID === user.id)
         .reduce((total, item) =>
            item.status === "confirmed" ? total + (parseFloat(item.amount) || 0) : total, 0);
-        const totalBudgetsExceeded = budgetData?.reduce((total, item) =>
-           item.status === "completed" ? total + 1 : total, 0);
-        const totalPendingTasks = budgetData?.reduce((total, item) =>
-           item.status === "pending" ? total + 1 : total, 0);
-        // 5. Calculate confirmed expenses per budget (for current user)
+
       const expenseTotalByBudget = expenseData
       .filter(item => item.status === "confirmed" && item.userID === user.id)
       .reduce((acc, expenseData) => {
@@ -74,7 +68,7 @@ export default function ManagerDashbord({user}) {
         return acc;
       }, {});
 
-      // 6. Count budgets exceeded vs not exceeded
+      //Count budgets exceeded vs not exceeded
       let budgetsExceeded=0;
       let budgetsNotExceeded=0;
       budgetData.filter((row)=>row.userID == user.id && row.status == "active")
@@ -147,8 +141,7 @@ export default function ManagerDashbord({user}) {
           return (
             item.status === "confirmed" &&
             item.userID === user.id &&
-            itemDate >= startOfMonth &&
-            itemDate <= now
+            item.date.slice(0,7) == currentMonthYear
           );
         }).reduce((acc, expenseData) => {
             if (!acc[expenseData.budgetID]) acc[expenseData.budgetID] = 0;
@@ -193,21 +186,31 @@ export default function ManagerDashbord({user}) {
   console.log("budget :"+JSON.stringify(budgetData));
   console.log("Expense :"+JSON.stringify(getExpenseData));
 
+  const chartData = Object.values(
+    stats.combinedData.reduce((acc, item) => {
+      const { date, amount, status } = item;
+  
+      if (!acc[date]) {
+        acc[date] = {
+          date,
+          confirmedAmount: 0,
+          unconfirmedAmount: 0
+        };
+      }
+  
+      if (status === 'confirmed') {
+        acc[date].confirmedAmount += amount;
+      } else if (status === 'unConfirmed') {
+        acc[date].unconfirmedAmount += amount;
+      }
+  
+      return acc;
+    }, {})
+  );
+  
   return (
     <div>
       <DashbordContainer styleDashboard={styleDashboard}>
-        {/*********** STATISTICS CONTAINER FOR TITLE AND FILTER ****************/}
-        <StatisticsContainer styleStatsContainer={styleStatsContainer}>
-          <StatisticTitle styleStatTitle={styleStatTitle}>
-            Dashboard
-          </StatisticTitle>
-
-          <DashboardFilter 
-            setStatsDuration={setStatsDuration} 
-            statsDuration={statsDuration}
-          />
-        </StatisticsContainer>
-
         {/*********** STATISTICS CONTAINER FOR STATS ****************/}
         <StatisticsContainer styleStatsContainer={styleStatsContainer}>
 
@@ -271,24 +274,29 @@ export default function ManagerDashbord({user}) {
           {
           (stats.expenseIsLoading || stats.budgetIsLoading) ? <LoadingSpinner/> :
 
-          <ResponsiveContainer height={350} width={"90%"}>  
-          <AreaChart data={stats.combinedData} style={styleAreaChart}>
+          <ResponsiveContainer height={300} width={"90%"}>  
+          <AreaChart data={chartData} style={styleAreaChart}>
             <XAxis dataKey="date" style={styleXaxis}/>
             <YAxis unit={"Tsh"} style={styleYaxis}/>
             <Tooltip/>
             <defs>
-              <linearGradient id="expenditure" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="unconfirmedExpense" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="rgb(54, 208, 4)" stopOpacity={1}/>
                 <stop offset="95%" stopColor="rgb(54, 208, 4)" stopOpacity={0.5}/>
               </linearGradient>
-              <linearGradient id="expens" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="confirmedExpense" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="50%" stopColor="rgba(6, 72, 152, 0.86)" stopOpacity={1}/>
                 <stop offset="95%" stopColor="rgba(6, 72, 152, 0.86)" stopOpacity={0.5}/>
               </linearGradient>
             </defs>
-            <Area type="monotone" dataKey="amount" strokeWidth={1}
-            stroke="rgba(6, 72, 152, 0.86)" fill="url(#expens)" unit={"Tsh"} name="amount"
+
+            <Area type="monotone" dataKey="unconfirmedAmount" strokeWidth={1}
+            stroke="rgb(54, 208, 4)" fill="url(#unconfirmedExpense)" unit={"Tsh"} name="un-confirmed amount"
             />
+            <Area type="monotone" dataKey="confirmedAmount" strokeWidth={1}
+            stroke="rgba(6, 72, 152, 0.86)" fill="url(#confirmedExpense)" unit={"Tsh"} name="confirmed amount"
+            />
+
             <CartesianGrid strokeWidth={0.5} strokeDasharray={5}/>
           </AreaChart>
           </ResponsiveContainer>
@@ -303,8 +311,10 @@ export default function ManagerDashbord({user}) {
 //Css Styles
 const styleDashboard={
   backgroundColor:"rgba(252, 254, 255, 0.9)",
-  height:"88vh",
+  height:"77vh",
   overflowY:"auto",
+  padding:"20px 0px",
+  boxShadow:"2px 2px 10px rgba(20,20,20,1)",
 }
 
 const styleStatsContainer={
