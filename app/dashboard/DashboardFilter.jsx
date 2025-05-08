@@ -34,7 +34,7 @@ const styleFilterContainer ={
 }
 const optionStyle ={
     display:"flex",
-    padding:"10px",
+    padding:"7px 10px",
     textAlign:"center",
     fontSize:"14px",
     cursor:"pointer",

@@ -16,13 +16,29 @@ const Page = () => {
     }
   return (
     <>
-              {/* <DashboardFilter 
-                setStatsDuration={setStatsDuration} 
-                statsDuration={statsDuration}
-              /> */}
-    <ManagerDashbord user={user}/>
+    <div style={headerContainer}>
+       <div style={header}>Dashboard</div>
+       <DashboardFilter setStatsDuration={setStatsDuration} statsDuration={statsDuration} /> 
+    </div>          
+    <ManagerDashbord user={user} setStatsDuration={setStatsDuration} statsDuration={statsDuration}/>
     </>
   );
 };
 
 export default Page;
+
+//css
+const headerContainer={
+  display:"flex",
+  flexWrap:"wrap",
+  gap:"10px",
+  justifyContent:"space-between",
+  justifySelf:"center",
+  width:"100%",
+  padding:"13px 0px",
+  //border:"1px solid red",
+}
+const header={
+  fontSize:"20px",
+  fontWeight:"500",
+}
