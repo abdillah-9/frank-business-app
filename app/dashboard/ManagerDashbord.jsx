@@ -439,8 +439,13 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
         {/********************************* AREA CHART ********************************/}
         <StatisticsContainer styleStatsContainer={styleStatsContainer}>
         <StatisticGraph styleStatisticGraph={styleStatisticGraph}>
-          <h4 style={{fontWeight:500,fontSize:"17px"}}>
+          {
+            areaChartData !="" && areaChartData != undefined ?
+            <h4 style={{fontWeight:500,fontSize:"17px"}}>
             Expenses from {areaChartData[0].date} to {areaChartData[areaChartData.length - 1].date}</h4>
+            :""
+          }
+
           {
           (stats.expenseIsLoading || stats.budgetIsLoading) ? <LoadingSpinner/> :
           <ResponsiveContainer height={300} width={"90%"}>  
@@ -475,8 +480,12 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
         {/************************************** BAR GRAPH ********************************/}
         <StatisticsContainer styleStatsContainer={styleStatsContainer}>
         <div style={barChartDesc}>
-        <h4 style={{fontWeight:500,fontSize:"15px"}}>
-          Expenses VS Budgets from {barChartData[0].date} to {barChartData[barChartData.length - 1].date}</h4>
+          {
+            barChartData !="" && barChartData != undefined ?
+            <h4 style={{fontWeight:500,fontSize:"15px"}}>
+            Expenses VS Budgets from {barChartData[0].date} to {barChartData[barChartData.length - 1].date}</h4>
+            :""
+          }
           {
             barChartData?.map((row)=>
               <div key={row.budgetID} style={barChildDesc}>
