@@ -10,10 +10,13 @@ import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy';
 import { getBudgetData } from '@utils/apiBudget';
 import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner';
 import { BsMenuButtonFill, BsMenuButtonWideFill } from '@node_modules/react-icons/bs';
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis }
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis }
   from '@node_modules/recharts';
 
 export default function ManagerDashbord({user, statsDuration, setStatsDuration}) {
+  let active = "rgb(83, 211, 162)";
+  let upcoming = "rgba(13, 174, 248, 0.97)";
+  let expired = "rgb(252, 84, 84)";
   
   // State to hold stats
   const [stats, setStats] = useState({
@@ -24,6 +27,8 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
     expenseIsLoading: true,
     budgetIsLoading: true,
     combinedData:[{}],
+    budgetChartData:[],
+    expenseChartData:[],
   });
 
   // Fetch expense
@@ -52,6 +57,7 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
 
   useEffect(() => {
     if (budgetData && expenseData) {
+      console.log("budgetData is "+JSON.stringify(budgetData))
       if (statsDuration === "All") {
         const totalActiveBudget = budgetData?.filter((row)=>row.userID === user.id)
         .reduce((total, item) => 
@@ -82,11 +88,28 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
         budgetsNotExceeded++;
       }})
 
+        //budgetChartData
+        let budgetChartData = [...budgetData]
+        .filter(exp => exp.userID === user.id)
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+        //create expenseChartData
+        let expenseChartData = [...expenseData].filter((row)=>row.userID == user.id)
+        .sort((a,b)=> new Date(a.date) - new Date(b.date))
+        .map(row => ({
+          ...row,
+          date: new Date(row.date).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }).slice(0, 7)
+        }))
+
+        console.log("expense cahrt data "+JSON.stringify(expenseChartData))
         //Calculate combineddata
         let sortedCombinedData = [...expenseData]
         .filter(exp => exp.userID === user.id)
         .sort((a, b) => new Date(a.date) - new Date(b.date));  
-        
+
         setStats({
           totalBudgetsNotExceeded:budgetsNotExceeded,
           totalBudgetsExceeded:budgetsExceeded,
@@ -95,6 +118,8 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
           expenseIsLoading,
           budgetIsLoading,
           combinedData:sortedCombinedData,
+          budgetChartData,
+          expenseChartData,
         });
       }
 
@@ -163,6 +188,25 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
       }})
 
 
+        //budgewtChartData
+        let budgetChartData = [...budgetData]
+        .filter(exp => exp.userID === user.id)
+        .filter(exp => exp.startDate.slice(0, 7) === currentMonthYear)
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+        //create expenseChartData
+        let expenseChartData = [...expenseData].
+        filter((row)=>row.userID == user.id)
+        .filter(exp => exp.date.slice(0, 7) === currentMonthYear)
+        .sort((a,b)=> new Date(a.date) - new Date(b.date))
+        .map(row => ({
+          ...row,
+          date: new Date(row.date).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }).slice(0, 7)
+        }))
+
         //Calculate combineddata
         let sortedCombinedData = [...expenseData]
         .filter(exp => exp.userID === user.id)
@@ -177,37 +221,91 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
           expenseIsLoading,
           budgetIsLoading,
           combinedData:sortedCombinedData,
+          budgetChartData,
+          expenseChartData,
         });
       }
     }
   }, [statsDuration, budgetData, expenseData, expenseIsLoading, budgetIsLoading]);
 
-  console.log("combined  "+JSON.stringify(stats.combinedData))
-  console.log("budget :"+JSON.stringify(budgetData));
-  console.log("Expense :"+JSON.stringify(getExpenseData));
 
-  const chartData = Object.values(
+  //pieChart data
+  const pieChartData = stats.budgetChartData?.
+    reduce((acc,item)=>{
+      const status = item.status;
+      const id = item.id;
+      const amount = item.amount || 0;
+      const startDate = item.startDate;
+
+      //explanations needed
+      const existing = acc.find((entry) => entry.status === status);
+      if (existing) {
+        existing.total += amount;
+      } else {
+        acc.push({ id, status, total: amount, startDate });
+      }
+
+    return acc
+    },[]
+    );
+
+  const areaChartData = Object.values(
     stats.combinedData.reduce((acc, item) => {
+      
       const { date, amount, status } = item;
-  
-      if (!acc[date]) {
-        acc[date] = {
-          date,
+      console.log("date passed is"+date);
+
+      const validDate = new Date(date);
+      //const isoDate = validDate.toISOString().slice(0,10);
+      const localeDate = validDate.toLocaleDateString("en-US",{
+        month:"short",
+        day:"numeric",
+      });      
+      
+      if (!acc[localeDate]) {
+        acc[localeDate] = {
+          date: localeDate,
           confirmedAmount: 0,
           unconfirmedAmount: 0
         };
       }
-  
+
       if (status === 'confirmed') {
-        acc[date].confirmedAmount += amount;
+        acc[localeDate].confirmedAmount += amount;
       } else if (status === 'unConfirmed') {
-        acc[date].unconfirmedAmount += amount;
+        acc[localeDate].unconfirmedAmount += amount;
       }
   
       return acc;
     }, {})
   );
-  
+
+  //barChartData
+  let barChartData;
+  let total=0;
+  budgetData && expenseData ? barChartData = stats.expenseChartData.filter((row)=>row.status == "confirmed")
+  .reduce((acc,item)=>{
+    let amount = item.amount;
+    let budgetID = item.budgetID;
+    let date = item.date;
+    //let = item.amount;
+    let existing = acc.find((entry)=> entry.budgetID == budgetID)
+    let matchingID = budgetData.find((row)=> row.id == budgetID)
+
+    if (!matchingID) return acc; 
+    if(existing){
+      existing.total += amount;
+    }
+    else{
+      acc.push({ total: amount,budgetID,budgetName: matchingID.name,
+      budgetAmount:matchingID.amount, date})
+    }
+
+    return acc
+  }, [])
+  :""
+  barChartData? console.log("Bar chart data "+JSON.stringify(barChartData)):"";
+
   return (
     <div>
       <DashbordContainer styleDashboard={styleDashboard}>
@@ -266,16 +364,87 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
           </Statistic>
         </StatisticsContainer>
 
-        {/*********** STATISTICS CONTAINER FOR CHARTS ****************/}
+        {/********************************* PIE CHART ********************************/}
         <StatisticsContainer styleStatsContainer={styleStatsContainer}>
-
+          {
+            pieChartData? console.log("Pie chart data "+JSON.stringify(pieChartData)) :""
+          }
+          {
+            pieChartData !="" && pieChartData != undefined ?
+          <div style={pieChartStyle}>   
+          <ResponsiveContainer width={"100%"} height={240}>
+            <PieChart>
+              <Pie  
+                data={pieChartData} 
+                nameKey={'status'} 
+                dataKey={'total'} 
+                innerRadius={30} 
+                outerRadius={90}
+                cx={"33%"}
+                cy={"50%"}
+                paddingAngle={1.5}
+              >
+                {
+                  pieChartData.map((row)=>
+                    <Cell
+                      fill={row.status == "expired" && expired || 
+                      row.status == "upcoming" && upcoming||
+                      row.status == "active" && active}
+                      stroke={""}
+                      key={row.id}
+                />
+                )
+                }
+              </Pie>
+              <Legend 
+              align='right'
+                verticalAlign='middle'
+                width={100}
+                fontSize={"20px"}
+                layout='verticle'
+                iconSize={12}
+                iconType='circle'/>
+            </PieChart>
+          </ResponsiveContainer>  
+          </div>
+          :""
+          }
+          <div style={pieChartDescStyle}>
+            {
+              pieChartData !="" && pieChartData != undefined ?
+              <h4 style={{fontWeight:500,fontSize:"17px", textAlign:"center",width:"500px"}}>
+                Total budgets from {pieChartData[0].startDate} to {pieChartData[pieChartData.length - 1].startDate}
+              </h4>: <h4></h4>
+            }
+            <div key={Math.random()} 
+              style={{display:"flex",gap:"20px"}}>
+            {
+              pieChartData !="" && pieChartData != undefined ?
+              pieChartData.map((row)=> 
+                <div style={pieChartDescStatsStyle} key={row.id}>
+                  <div style={{...pieStatsStyle,backgroundColor: row.status == "active" ? 
+                  active: row.status == "upcoming"  ? upcoming: row.status == "expired" && expired}}>
+                    {row.status}</div>
+                  <div style={{...pieStatsStyle, borderBottom:"5px solid",
+                    borderBottomColor:row.status == "active" ? 
+                    active: row.status == "upcoming"  ? upcoming: row.status == "expired" && expired
+                  }}>{row.total} Tsh</div>
+                </div>
+              ) 
+              :""
+            }
+            </div>
+          </div>
+        </StatisticsContainer>
+        {/********************************* AREA CHART ********************************/}
+        <StatisticsContainer styleStatsContainer={styleStatsContainer}>
         <StatisticGraph styleStatisticGraph={styleStatisticGraph}>
-          <h4 style={{fontWeight:500,fontSize:"17px"}}>USER EXPENSES</h4>
+          <h4 style={{fontWeight:500,fontSize:"17px"}}>
+            Expenses from {areaChartData[0].date} to {areaChartData[areaChartData.length - 1].date}</h4>
           {
           (stats.expenseIsLoading || stats.budgetIsLoading) ? <LoadingSpinner/> :
-
           <ResponsiveContainer height={300} width={"90%"}>  
-          <AreaChart data={chartData} style={styleAreaChart}>
+          <AreaChart data={areaChartData} style={styleAreaChart}>
             <XAxis dataKey="date" style={styleXaxis}/>
             <YAxis unit={"Tsh"} style={styleYaxis}/>
             <Tooltip/>
@@ -303,6 +472,30 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
           }
           </StatisticGraph>
         </StatisticsContainer>
+        {/************************************** BAR GRAPH ********************************/}
+        <StatisticsContainer styleStatsContainer={styleStatsContainer}>
+        <div style={barChartDesc}>
+        <h4 style={{fontWeight:500,fontSize:"15px"}}>
+          Expenses VS Budgets from {barChartData[0].date} to {barChartData[barChartData.length - 1].date}</h4>
+          {
+            barChartData?.map((row)=>
+              <div key={row.budgetID} style={barChildDesc}>
+                {row.budgetName} budget :<div style={barBudget}> {row.budgetAmount} Tsh</div>
+                Total expense :<div style={barTotalExpense}> {row.total} Tsh</div>
+              </div>
+            )
+          }
+        </div>  
+        <BarChart width={730} height={450} data={barChartData} style={barChartStyle}>
+          <CartesianGrid strokeDasharray="1 1" />
+          <XAxis dataKey="budgetName" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="total" fill={active} />
+          <Bar dataKey="budgetAmount" fill={upcoming} />
+        </BarChart>
+        </StatisticsContainer>
       </DashbordContainer>
     </div>
   );
@@ -311,10 +504,11 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
 //Css Styles
 const styleDashboard={
   backgroundColor:"rgba(252, 254, 255, 0.9)",
+  //backgroundColor:"rgb(235,235,235)",
   height:"77vh",
   overflowY:"auto",
   padding:"20px 0px",
-  boxShadow:"2px 2px 10px rgba(20,20,20,1)",
+  boxShadow:"2px 2px 10px rgba(20,20,20,0.3)",
 }
 
 const styleStatsContainer={
@@ -326,7 +520,72 @@ const styleStatsContainer={
   justifySelf:"center",
   width:"90%",
   padding:"13px 0px",
-  //border:"1px solid red",
+}
+const pieChartStyle={
+  //backgroundColor:"rgb(235,235,235)",
+  boxShadow:"2px 2px 20px rgba(20,20,20,0.5)",
+  minWidth:"350px",
+  width:"35%",
+  display:"flex",
+  flexDirection:"column",
+  padding:"20px 10px"
+}
+const barChartStyle={
+  //backgroundColor:"rgb(235,235,235)",
+  boxShadow:"2px 2px 20px rgba(20,20,20,0.5)",
+  minWidth:"350px",
+  width:"60%",
+  display:"flex",
+  flexDirection:"column",
+  padding:"20px 10px"
+}
+const barChartDesc={
+  //backgroundColor:"rgb(235,235,235)",
+  boxShadow:"2px 2px 20px rgba(20,20,20,0.5)",
+  fontWeight:500,
+  gap:"20px",
+  minWidth:"350px",
+  width:"37%",
+  maxHeight:"500px",
+  display:"flex",
+  flexDirection:"column",
+  padding:"20px",
+  overflow:"auto",
+}
+const barChildDesc={
+  padding:"20px 10px",
+  borderBottom:"3px solid rgb(252, 84, 84)",
+  display:"flex",
+  flexDirection:"column",
+  gap:"20px",
+}
+const barBudget={
+  backgroundColor: "rgba(13, 174, 248, 0.97)",
+  padding:"15px",
+}
+const barTotalExpense={
+  backgroundColor: "rgb(83, 211, 162)",
+  padding:"15px",
+}
+const pieChartDescStyle={
+  boxShadow:"2px 2px 20px rgba(20,20,20,0.5)",
+  minWidth:"350px",
+  width:"60%",
+  display:"flex",
+  flexDirection:"column",
+  height:"240px",
+  padding:"20px 10px",
+  gap:"20px",
+}
+const pieChartDescStatsStyle={
+  display:"flex",
+  flexDirection:"column",
+  gap:"20px",
+  width:"100%",
+}
+const pieStatsStyle={
+  padding:"15px",
+  fontWeight:500,
 }
 
 const styleStatistic={
@@ -348,6 +607,7 @@ const styleStatisticGraph={
   justifyContent:"center",
   gap:"20px",
   width:"100%",
+  minWidth:"350px",
   padding:"20px 0px",
   marginTop:"20px",
 }
