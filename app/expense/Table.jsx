@@ -11,7 +11,7 @@ import { useDispatch } from '@node_modules/react-redux/dist/react-redux';
 import toast from '@node_modules/react-hot-toast/dist';
 import { IoWarning } from '@node_modules/react-icons/io5';
 
-export default function Table({expense, user, budget}) {
+export default function Table({expense, user, budget, pageRows,pageNumber}) {
 
   //CSS
   const unConfirmed = {
@@ -78,8 +78,13 @@ export default function Table({expense, user, budget}) {
             </TR>
           </THead>
            <TBody>
+            {
+              console.log("page number is "+pageRows)
+            }
             {  
-              expense ? expense.filter(exp => exp.userID === user.id).map(expenseRow=>
+              expense ? expense.filter(exp => exp.userID === user.id)
+              .slice((pageNumber - 1) * pageRows, pageNumber * pageRows)
+              .map(expenseRow=>
                 <TR key={expenseRow.id} styleTR={tRow}>
                   <TD styleTD={tCell}>
                     {
