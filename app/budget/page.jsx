@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Table from './Table'
 import Container from '@app/reusables/UI_components/Container'
 import Texts from '@app/reusables/UI_components/Texts'
@@ -14,6 +14,11 @@ import { useDeleteFormData } from './budgetHooks/useDeleteBudget'
 import { useCreateBudget } from './budgetHooks/useCreateBudget'
 import { useUpdateFormData } from './budgetHooks/useUpdateBudget'
 import useUser from '@app/authentication/hooks/useUser'
+import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner'
+import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy'
+import { getBudgetData } from '@utils/apiBudget'
+import Pagination from '@app/reusables/UI_components/Pagination'
+import { HiChevronLeft, HiChevronRight } from '@node_modules/react-icons/hi2'
 
 export default function page() {
   //Using React Query to fetch data from supabase
@@ -21,13 +26,71 @@ export default function page() {
     const {updateDataMutation} = useUpdateFormData();
     const {mutateDeleting} = useDeleteFormData();
     const {user} = useUser();
+    const [sortState, setSortState] = useState("all");
+    const [fetched, setFetched] = useState({
+      budgetData:[],
+    })
+    const [pageNumber, setPageNumber] = useState(1);
+    const [pageRows, setPageRows] = useState(4);
+    
+    const dispatch = useDispatch();
+    const formState = useSelector((store)=>store.ReduxState.showForm);
+    const overlayState = useSelector((store)=>store.ReduxState.overlay);
+    //Now lets use the React Query to fetch data from supabase
+    const {isLoading, data: budget, error} =  useQuery({
+      queryKey: ['budgetData'],
+      queryFn: getBudgetData
+    });
 
-  const dispatch = useDispatch();
-  const formState = useSelector((store)=>store.ReduxState.showForm);
-  const overlayState = useSelector((store)=>store.ReduxState.overlay);
+    useEffect(()=>{
+      if(budget && user){
+        let budgetData = budget.filter((row)=>row.userID == user.id)
+        setFetched({budgetData});
+      }
+    },[budget])
+
+  if(!user || !budget){
+    return <LoadingSpinner/>
+  }
 
   function createHandlerFunc(){
     dispatch(setReduxState({showForm: !formState, overlay: !overlayState,fetchedFormData: false}));
+  }
+
+  function sortButtonHandler(sortByString){
+    let budgetData;
+
+    if(sortByString == "all"){
+      setSortState(sortByString)
+      budgetData = budget.filter((row)=>row.userID == user.id)
+    }
+
+    else if(sortByString == "active"){
+      setSortState(sortByString)
+      budgetData = budget.filter((row)=>row.userID == user.id && row.status == "active")
+    }
+    else if(sortByString == "upcoming"){
+      setSortState(sortByString)
+      budgetData = budget.filter((row)=>row.userID == user.id && row.status == "upcoming")
+    }
+    else if(sortByString == "expired"){
+      setSortState(sortByString)
+      budgetData = budget.filter((row)=>row.userID == user.id && row.status == "expired")
+    }
+
+    setFetched({budgetData})
+  }
+
+  function prev(){
+    if(pageNumber > 1){
+    setPageNumber(pageNumber -1)
+  }
+  }
+
+  function next(){
+    if(pageNumber < (fetched.budgetData.length / pageRows)){
+      setPageNumber(pageNumber +1)
+    }
   }
 
   return (
@@ -37,13 +100,58 @@ export default function page() {
       <Container>
         <Texts textStyle={headingStyle}>All budgets</Texts>
         <Container containerStyle={buttonsContainer}>
-          <Button buttonStyle={buttonWidth}>All</Button>
-          <Button buttonStyle={buttonWidth}>Confirmed</Button>
-          <Button buttonStyle={buttonWidth}>Unconfirmed</Button>
+          <Button buttonStyle={
+            sortState == "all" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } 
+          actionHandler={()=>sortButtonHandler("all")}>
+            All
+          </Button>
+          <Button buttonStyle={
+            sortState == "active" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } actionHandler={()=>sortButtonHandler("active")}>
+            active
+          </Button>
+          <Button buttonStyle={
+            sortState == "upcoming" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } actionHandler={()=>sortButtonHandler("upcoming")}>
+            upcoming
+          </Button>
+          <Button buttonStyle={
+            sortState == "expired" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } actionHandler={()=>sortButtonHandler("expired")}>
+            expired
+          </Button>
         </Container>
       </Container>
       <Container containerStyle={tableContainer}>
-        <Table/>
+
+        <Table 
+          user={user} 
+          budget={fetched.budgetData}
+          sortState={sortState}
+          pageNumber={pageNumber}
+          pageRows={pageRows}
+        />
+
+        <Pagination>
+          <Pagination.Desc>
+            {console.log(JSON.stringify(fetched.budgetData))}
+            <div>
+              <span>Showing </span> {(pageNumber - 1)*pageRows + 1} 
+              <span> to </span> {Math.min(pageNumber * pageRows, fetched.budgetData.length)} 
+              <span> results of </span> {fetched.budgetData.length}
+            </div>
+          </Pagination.Desc>
+          <Pagination.ButtonsBody>
+            <Button actionHandler={prev} buttonStyle={paginateButton}>
+              <Icon><HiChevronLeft/></Icon><div>Prev</div>
+            </Button>
+            <Button actionHandler={next} buttonStyle={paginateButton}>
+              <div>Next</div><Icon><HiChevronRight/></Icon>
+            </Button>
+          </Pagination.ButtonsBody>
+        </Pagination>
+
       </Container>   
       <Container>
         <Button buttonStyle={createButton} actionHandler={createHandlerFunc}>
@@ -73,7 +181,12 @@ const tableContainer={
 }
 
 const buttonWidth={
-  textAlign:"left",padding:"5px", fontSize:"13px"
+  textAlign:"left",padding:"10px", fontSize:"13px"
+}
+
+const activeSort={
+  color:"white",
+  backgroundColor:"rgba(79, 8, 161, 0.76)",  
 }
 
 const buttonsContainer={
@@ -93,4 +206,12 @@ const createButton={
   gap:"6px",
   justifyContent:"center",
   alignItems:"center",
+}
+
+const paginateButton={
+  display:"flex",
+  gap:"3px",
+  alignItems:"center",
+  fontWeight:500,
+  fontSize:"14px",
 }

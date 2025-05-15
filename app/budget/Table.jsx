@@ -1,24 +1,15 @@
 "use client"
-import useUser from '@app/authentication/hooks/useUser';
 import { setReduxState } from '@app/provider/redux/reducer';
 import Icon from '@app/reusables/UI_components/Icon';
 import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner';
 import TableContainer, { TBody,THead,TH,TR,TD } from '@app/reusables/UI_components/Table/TableContainer'
-import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy';
 import { HiOutlinePencil, HiOutlineTrash } from '@node_modules/react-icons/hi2';
 import { useDispatch } from '@node_modules/react-redux/dist/react-redux';
-import { getBudgetData } from '@utils/apiBudget';
 import React from 'react'
 
-export default function Table() {
-  //Now lets use the React Query to fetch data from supabase
-  const {isLoading, data: budget, error} =  useQuery({
-    queryKey: ['budgetData'],
-    queryFn: getBudgetData
-  });
-
+export default function Table({user, budget, pageNumber, pageRows}) {
   const dispatch = useDispatch();
-  const {user} = useUser();
+
   let id = "";let rowID="";
 
   if (!user) {
@@ -66,7 +57,9 @@ const upcoming = {
           </THead>
            <TBody>
             {
-              budget ? budget.filter(exp => exp.userID === user.id).map(budgetRow=>
+              budget ? budget
+              .slice((pageNumber - 1) * pageRows, pageNumber * pageRows)
+              .map(budgetRow=>
                 <TR key={budgetRow.id} styleTR={tRow}>
                   <TD styleTD={tCell}>{budgetRow.name}</TD>
                   <TD styleTD={tCell}>{budgetRow.amount+"TSh"}</TD>

@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import Table from './Table'
 import Container from '@app/reusables/UI_components/Container'
 import Texts from '@app/reusables/UI_components/Texts'
@@ -18,6 +18,8 @@ import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner'
 import DeletePrompt from '@app/reusables/UI_components/deletePrompt'
 import { useDeleteFormData } from './expenseHooks/useDeleteExpense'
 import { useUpdateFormData } from './expenseHooks/useUpdateExpense'
+import Pagination from '@app/reusables/UI_components/Pagination'
+import { HiChevronLeft, HiChevronRight, HiOutlineChevronLeft } from '@node_modules/react-icons/hi2'
 
 export default function page() {
   //Using React Query to fetch data from supabase
@@ -25,12 +27,15 @@ export default function page() {
     const {updateDataMutation} = useUpdateFormData();
     const {mutateDeleting} = useDeleteFormData();
     const {user} = useUser();
+    const [sortState, setSortState] = useState("all");
+    const [fetched, setFetched] = useState({
+      expenseData:[],
+      budgetData:[],
+    })  
+    const [pageNumber, setPageNumber] = useState(1);
+    const [pageRows, setPageRows] = useState(4);
   
-    if(!user){
-      <LoadingSpinner/>
-    }  
-  
-  const {isLoading, data: budget, error} =  useQuery({
+  const {isLoading: budgetLoading, data: budget, error} =  useQuery({
     queryKey: ['budgetData'],
     queryFn: getBudgetData
   });
@@ -41,12 +46,61 @@ export default function page() {
     queryFn: getExpenseData
   });
 
+  useEffect(()=>{
+    if(expense && budget){
+      let expenseData = expense.filter((row)=>row.userID == user.id)
+      let budgetData = budget.filter((row)=>row.userID == user.id)
+      setFetched({expenseData, budgetData});
+    }
+  },[expense, budget])
+
   const dispatch = useDispatch();
   const formState = useSelector((store)=>store.ReduxState.showForm);
   const overlayState = useSelector((store)=>store.ReduxState.overlay);
 
+  if(!user || expenseLoading || budgetLoading){
+    return <LoadingSpinner/>
+  }
+
   function showFormHandler(){
     dispatch(setReduxState({showForm: !formState, overlay: !overlayState, fetchedFormData: false}));
+  }
+
+  function sortButtonHandler(sortByString){
+    console.log("sortByString: "+sortByString)
+    let expenseData;
+    let budgetData;
+
+    if(sortByString == "all"){
+      setSortState(sortByString)
+      expenseData = expense.filter((row)=>row.userID == user.id)
+      budgetData = budget.filter((row)=>row.userID == user.id)
+    }
+
+    else if(sortByString == "confirmed"){
+      setSortState(sortByString)
+      expenseData = expense.filter((row)=>row.userID == user.id && row.status == "confirmed")
+      budgetData = budget.filter((row)=>row.userID == user.id)
+    }
+    else if(sortByString == "unConfirmed"){
+      setSortState(sortByString)
+      expenseData = expense.filter((row)=>row.userID == user.id && row.status == "unConfirmed")
+      budgetData = budget.filter((row)=>row.userID == user.id)
+    }
+
+    setFetched({expenseData,budgetData})
+  }
+
+  function prev(){
+    if(pageNumber > 1){
+    setPageNumber(pageNumber -1)
+  }
+  }
+
+  function next(){
+    if(pageNumber < (fetched.expenseData.length / pageRows)){
+      setPageNumber(pageNumber +1)
+    }
   }
 
   return (
@@ -57,13 +111,53 @@ export default function page() {
       <Container>
         <Texts textStyle={headingStyle}>All expenses</Texts>
         <Container containerStyle={buttonsContainer}>
-          <Button buttonStyle={buttonWidth}>All</Button>
-          <Button buttonStyle={buttonWidth}>Confirmed</Button>
-          <Button buttonStyle={buttonWidth}>Unconfirmed</Button>
+          <Button buttonStyle={
+            sortState == "all" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } 
+          actionHandler={()=>sortButtonHandler("all")}>
+            All
+          </Button>
+          <Button 
+            buttonStyle={
+            sortState == "confirmed" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+            } 
+            actionHandler={()=>sortButtonHandler("confirmed")}>
+            Confirmed
+          </Button>
+          <Button buttonStyle={
+            sortState == "unConfirmed" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } actionHandler={()=>sortButtonHandler("unConfirmed")}>
+            Unconfirmed
+          </Button>
         </Container>
       </Container>
       <Container containerStyle={tableContainer}>
-        <Table budget={budget} expense={expense} user={user}/>
+        <Table 
+          budget={fetched.budgetData} 
+          expense={fetched.expenseData} 
+          user={user} 
+          sortState={sortState}
+          pageNumber={pageNumber}
+          pageRows={pageRows}
+        />
+        <Pagination>
+          <Pagination.Desc>
+            {console.log(JSON.stringify(fetched.expenseData))}
+            <div>
+              <span>Showing </span> {(pageNumber - 1)*pageRows + 1} 
+              <span> to </span> {Math.min(pageNumber * pageRows, fetched.expenseData.length)} 
+              <span> results of </span> {fetched.expenseData.length}
+            </div>
+          </Pagination.Desc>
+          <Pagination.ButtonsBody>
+            <Button actionHandler={prev} buttonStyle={paginateButton}>
+              <Icon><HiChevronLeft/></Icon><div>Prev</div>
+            </Button>
+            <Button actionHandler={next} buttonStyle={paginateButton}>
+              <div>Next</div><Icon><HiChevronRight/></Icon>
+            </Button>
+          </Pagination.ButtonsBody>
+        </Pagination>
       </Container>   
       <Container>
         <Button buttonStyle={createButton} actionHandler={showFormHandler}>
@@ -93,7 +187,11 @@ const tableContainer={
 }
 
 const buttonWidth={
-  textAlign:"left",padding:"5px", fontSize:"13px"
+  textAlign:"left",padding:"10px", fontSize:"13px"
+}
+const activeSort={
+  color:"white",
+  backgroundColor:"rgba(79, 8, 161, 0.76)",  
 }
 
 const buttonsContainer={
@@ -113,4 +211,12 @@ const createButton={
   gap:"6px",
   justifyContent:"center",
   alignItems:"center",
+}
+
+const paginateButton={
+  display:"flex",
+  gap:"3px",
+  alignItems:"center",
+  fontWeight:500,
+  fontSize:"14px",
 }

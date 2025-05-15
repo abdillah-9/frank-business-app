@@ -24,11 +24,6 @@ export default function page() {
       <Form/>
       <Container>
         <Texts textStyle={headingStyle}>Active user</Texts>
-        <Container containerStyle={buttonsContainer}>
-          <Button buttonStyle={buttonWidth}>All</Button>
-          <Button buttonStyle={buttonWidth}>Confirmed</Button>
-          <Button buttonStyle={buttonWidth}>Unconfirmed</Button>
-        </Container>
       </Container>
       <Container containerStyle={tableContainer}>
         <Table/>
