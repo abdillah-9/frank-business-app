@@ -28,9 +28,9 @@ export default function TopNavBar() {
   }
 
   const imageAttributes={
-    src:avatar? avatar : "/assets/images/logo.svg",
-    width:30,
-    height:30,
+    src:avatar? avatar : "/assets/images/userProfile.svg",
+    width:50,
+    height:50,
     alt:"",
   }
 
@@ -86,13 +86,13 @@ const activeUser={
 }
 
 const fullNameStyle={
-  fontSize:"13px",
+  fontSize:"15px",
 }
 
 const icons={
   display:"flex",
   gap:"15px",
   color:"rgba(79, 8, 161, 0.76)",
-  fontSize:"17px",
+  fontSize:"25px",
   cursor:"pointer",
 }

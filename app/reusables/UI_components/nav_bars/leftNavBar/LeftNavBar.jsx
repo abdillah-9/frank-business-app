@@ -9,6 +9,8 @@ import useWindowSize from '@app/reusables/CUSTOM_hooks/useWindowSize';
 import { useDispatch, useSelector } from '@node_modules/react-redux/dist/react-redux';
 import Link from '@node_modules/next/link';
 import { setReduxState } from '@app/provider/redux/reducer';
+import { BsRobot } from '@node_modules/react-icons/bs';
+import {VscRobot} from "@node_modules/react-icons/vsc"
 
 const LeftNavBar = () => {
 
@@ -81,6 +83,13 @@ useEffect(() => {
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
 
+      <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
+        <NavBarTemp.NavIcon navIconStyle={navIconStyle}><VscRobot/></NavBarTemp.NavIcon>
+          <NavBarTemp.NavText navTextStyle={navTextStyle}>
+            <Link href="/ai" onClick={linkClickEvent}>AI-insights</Link>
+          </NavBarTemp.NavText>        
+      </NavBarTemp.NavContainer>
+
     </NavBarTemp> :""
   )
 
@@ -122,7 +131,7 @@ const imageAttributes ={
 }
 
 const navIconStyle ={
-  fontSize:"15px",
+  fontSize:"18px",
   color:"rgba(79, 8, 161, 0.76)",
 }
 
