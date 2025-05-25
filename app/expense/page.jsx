@@ -64,10 +64,43 @@ export default function page() {
   }
   if(fetched.budgetData.length == 0 || fetched.expenseData.length == 0){
     return (
-            <div style={{fontSize:"14px", display:"flex", gap:"10px",
+            <div style={{fontSize:"14px", display:"flex", gap:"10px", justifyContent:"space-between",
             width:"100%",height:"100%", alignItems:"center", flexDirection:"column"}}>
-              <div>No data can be shown, please insert new to get started...</div> 
-              <Icon iconStyle={iconStyle}><TbMoodEmptyFilled/></Icon> 
+              <DeletePrompt mutateDeleting={mutateDeleting}/>
+      <Container containerStyle={{width:"100%", display:"flex", justifyContent:"space-between"}}>
+        <Texts textStyle={headingStyle}>All expenses</Texts>
+        <Container containerStyle={buttonsContainer}>
+          <Button buttonStyle={
+            sortState == "all" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } 
+          actionHandler={()=>sortButtonHandler("all")}>
+            All
+          </Button>
+          <Button 
+            buttonStyle={
+            sortState == "confirmed" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+            } 
+            actionHandler={()=>sortButtonHandler("confirmed")}>
+            Confirmed
+          </Button>
+          <Button buttonStyle={
+            sortState == "unConfirmed" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } actionHandler={()=>sortButtonHandler("unConfirmed")}>
+            Unconfirmed
+          </Button>
+        </Container>
+      </Container>
+              <div style={{display:"flex",alignItems:"center",flexDirection:"column", gap:"15px"}}>
+                <div>No data can be shown, please insert new to get started...</div> 
+                <Icon iconStyle={iconStyle}><TbMoodEmptyFilled/></Icon> 
+              </div>
+              <Container containerStyle={{width:"100%"}}>
+                <Button buttonStyle={createButton} actionHandler={showFormHandler}>
+                  <Icon><BiAddToQueue /></Icon>Create expense
+                </Button>
+              </Container>
+              <Form budget={budget} user={user} insertDataMutation={insertDataMutation}
+              updateDataMutation={updateDataMutation}/>
             </div>
     )
   }

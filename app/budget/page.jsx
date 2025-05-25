@@ -53,18 +53,55 @@ export default function page() {
   if(!user || !budget){
     return <LoadingSpinner/>
   }
+  
   if(fetched.budgetData.length === 0){
+    
     return (
-            <div style={{fontSize:"14px", display:"flex", gap:"10px",
+            <div style={{fontSize:"14px", display:"flex", gap:"10px", justifyContent:"space-between",
             width:"100%",height:"100%", alignItems:"center", flexDirection:"column"}}>
-              <div>No data can be shown, please insert new to get started...</div> 
-              <Icon iconStyle={iconStyle}><TbMoodEmptyFilled/></Icon> 
+              <DeletePrompt mutateDeleting={mutateDeleting}/>
+      <Container containerStyle={{width:"100%", display:"flex", justifyContent:"space-between"}}>
+        <Texts textStyle={headingStyle}>All budgets</Texts>
+        <Container containerStyle={buttonsContainer}>
+          <Button buttonStyle={
+            sortState == "all" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } 
+          actionHandler={()=>sortButtonHandler("all")}>
+            All
+          </Button>
+          <Button buttonStyle={
+            sortState == "active" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } actionHandler={()=>sortButtonHandler("active")}>
+            active
+          </Button>
+          <Button buttonStyle={
+            sortState == "upcoming" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } actionHandler={()=>sortButtonHandler("upcoming")}>
+            upcoming
+          </Button>
+          <Button buttonStyle={
+            sortState == "expired" ? {...buttonWidth, ...activeSort} : {...buttonWidth}
+          } actionHandler={()=>sortButtonHandler("expired")}>
+            expired
+          </Button>
+        </Container>
+      </Container>
+              <div style={{display:"flex",alignItems:"center",flexDirection:"column", gap:"15px"}}>
+                <div>No data can be shown, please insert new to get started...</div> 
+                <Icon iconStyle={iconStyle}><TbMoodEmptyFilled/></Icon> 
+              </div>
+              <Container containerStyle={{width:"100%"}}>
+                <Button buttonStyle={createButton} actionHandler={createHandlerFunc}>
+                  <Icon><BiAddToQueue /></Icon>Create budget
+                </Button>
+              </Container>
+              <Form updateDataMutation={updateDataMutation} insertDataMutation={insertDataMutation} user={user}/>
             </div>
     )
   }
-  
+
   function createHandlerFunc(){
-    dispatch(setReduxState({showForm: !formState, overlay: !overlayState,fetchedFormData: false}));
+    dispatch(setReduxState({showForm: true, overlay: !overlayState,fetchedFormData: false}));
   }
 
   function sortButtonHandler(sortByString){
