@@ -113,7 +113,7 @@ export default function page() {
             width:"100%",height:"100%", alignItems:"center", flexDirection:"column"}}>
               <div>It looks like you have neither expenses nor budgets,
                 please insert new data to receive AI-insights...</div> 
-              <Icon iconStyle={iconStyle}><TbMoodEmptyFilled/></Icon> 
+              <Icon iconStyle={iconStyle}><LoadingSpinner/></Icon> 
             </div> 
             : 
             <Insights data={AI_response} stats={budgetStats}/> 
