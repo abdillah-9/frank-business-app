@@ -47,10 +47,13 @@ export default function page() {
         let budgetData = budget.filter((row)=>row.userID == user.id)
         setFetched({budgetData});
       }
-    },[budget])
+    },[budget, user])
 
-  if(!user || fetched.budgetData.length === 0){
+  if(!user || !budget){
     return <LoadingSpinner/>
+  }
+  if(fetched.budgetData.length === 0){
+    return "No budget available, please create one to get started!"
   }
   
   function createHandlerFunc(){
