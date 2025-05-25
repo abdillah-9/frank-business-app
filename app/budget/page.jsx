@@ -19,6 +19,7 @@ import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy'
 import { getBudgetData } from '@utils/apiBudget'
 import Pagination from '@app/reusables/UI_components/Pagination'
 import { HiChevronLeft, HiChevronRight } from '@node_modules/react-icons/hi2'
+import { TbMoodEmptyFilled } from '@node_modules/react-icons/tb'
 
 export default function page() {
   //Using React Query to fetch data from supabase
@@ -53,8 +54,13 @@ export default function page() {
     return <LoadingSpinner/>
   }
   if(fetched.budgetData.length === 0){
-    return <div style={{fontSize:"14px", width:"100%", alignItems:"center"}}>
-      No data can be shown, please insert new to get started!</div>
+    return (
+            <div style={{fontSize:"14px", display:"flex", gap:"10px",
+            width:"100%",height:"100%", alignItems:"center", flexDirection:"column"}}>
+              <div>No data can be shown, please insert new to get started...</div> 
+              <Icon iconStyle={iconStyle}><TbMoodEmptyFilled/></Icon> 
+            </div>
+    )
   }
   
   function createHandlerFunc(){
@@ -167,6 +173,11 @@ export default function page() {
 }
 
 //CSS
+const iconStyle={
+  padding:"0px 5px",
+  fontSize:"35px",
+  color:"rgba(79, 8, 161, 0.76)",
+}
 const expensContainer={
   display:"flex",
   flexDirection:"column",
