@@ -53,7 +53,7 @@ export default function page() {
       let budgetData = budget.filter((row)=>row.userID == user.id)
       setFetched({expenseData, budgetData});
     }
-  },[expense, budget])
+  },[expense, budget, user])
 
   const dispatch = useDispatch();
   const formState = useSelector((store)=>store.ReduxState.showForm);
