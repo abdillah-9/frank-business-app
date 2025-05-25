@@ -37,7 +37,7 @@ export default function page() {
     const formState = useSelector((store)=>store.ReduxState.showForm);
     const overlayState = useSelector((store)=>store.ReduxState.overlay);
     //Now lets use the React Query to fetch data from supabase
-    const {isLoading, data: budget, error} =  useQuery({
+    const {isLoading: budgetIsLoading, data: budget, error} =  useQuery({
       queryKey: ['budgetData'],
       queryFn: getBudgetData
     });
@@ -49,10 +49,10 @@ export default function page() {
       }
     },[budget])
 
-  if(!user || !budget){
+  if(!user || budgetIsLoading){
     return <LoadingSpinner/>
   }
-
+  
   function createHandlerFunc(){
     dispatch(setReduxState({showForm: !formState, overlay: !overlayState,fetchedFormData: false}));
   }
@@ -76,11 +76,6 @@ export default function page() {
     else if(sortByString == "expired"){
       setSortState(sortByString)
       budgetData = budget.filter((row)=>row.userID == user.id && row.status == "expired")
-    }
-    else{
-      setSortState(sortByString)
-      expenseData = expense.filter((row)=>row.userID == user.id)
-      budgetData = budget.filter((row)=>row.userID == user.id)  
     }
 
     setFetched({budgetData})
