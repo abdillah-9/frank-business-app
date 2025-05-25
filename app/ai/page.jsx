@@ -104,8 +104,10 @@ export default function page() {
   return (
     <div>
         {
-            !AI_response || userLoading || expenseLoading || budgetLoading ? 
-            <LoadingSpinner/> : <Insights data={AI_response} stats={budgetStats}/> 
+            userLoading || expenseLoading || budgetLoading ? 
+            <LoadingSpinner/> : 
+            !AI_response ? <div>Data not found...</div> : 
+            <Insights data={AI_response} stats={budgetStats}/> 
         }
     </div>
   )
