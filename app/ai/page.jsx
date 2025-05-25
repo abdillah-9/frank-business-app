@@ -108,14 +108,6 @@ export default function page() {
         {
             userLoading || expenseLoading || budgetLoading ? 
             <LoadingSpinner/> : 
-            AI_response === "" ? 
-            <div style={{fontSize:"14px", display:"flex", gap:"10px",
-            width:"100%",height:"100%", alignItems:"center", flexDirection:"column"}}>
-              <div>It looks like you have neither expenses nor budgets,
-                please insert new data to receive AI-insights...</div> 
-              <Icon iconStyle={iconStyle}><TbMoodEmptyFilled/></Icon> 
-            </div> 
-            : 
             <Insights data={AI_response} stats={budgetStats}/> 
         }
     </div>
