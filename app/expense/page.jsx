@@ -64,7 +64,7 @@ export default function page() {
   }
   if(fetched.budgetData.length == 0 || fetched.expenseData.length == 0){
     return (
-            <div style={{fontSize:"14px", justifyContent:"center",
+            <div style={{fontSize:"14px", justifyContent:"center",display:"flex", gap:"20px",
             width:"100%",height:"100%", alignItems:"center"}}>
               <div>No data can be shown, please insert new to get started!</div> 
               <Icon iconStyle={iconStyle}><TbMoodEmpty/></Icon> 
@@ -186,8 +186,8 @@ export default function page() {
 
 //CSS
 const iconStyle={
-  padding:"0px 20px",
-  fontSize:"21px",
+  padding:"0px 5px",
+  fontSize:"25px",
   color:"rgba(79, 8, 161, 0.76)",
 }
 const expensContainer={
