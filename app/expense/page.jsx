@@ -63,9 +63,13 @@ export default function page() {
     return <LoadingSpinner/>
   }
   if(fetched.budgetData.length == 0 || fetched.expenseData.length == 0){
-    return <div style={{fontSize:"14px", width:"100%", alignItems:"center"}}>
-      No data can be shown, please insert new to get started! 
-      <Icon iconStyle={iconStyle}><TbMoodEmpty/></Icon> </div>
+    return (
+            <div style={{fontSize:"14px", justifyContent:"center",
+            width:"100%",height:"100%", alignItems:"center"}}>
+              <div>No data can be shown, please insert new to get started!</div> 
+              <Icon iconStyle={iconStyle}><TbMoodEmpty/></Icon> 
+            </div>
+            )
   }
 
   function showFormHandler(){
@@ -183,7 +187,7 @@ export default function page() {
 //CSS
 const iconStyle={
   padding:"0px 20px",
-  fontSize:"16px",
+  fontSize:"21px",
   color:"rgba(79, 8, 161, 0.76)",
 }
 const expensContainer={
