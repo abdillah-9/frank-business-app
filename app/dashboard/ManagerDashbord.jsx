@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react';
 import DashbordContainer, 
 { Statistic, StatisticDesc, StatisticGraph, StatisticIcon, StatisticsContainer, StatisticTitle }
   from './DashboardContainer';
-import { GiReceiveMoney, GiPayMoney, GiTakeMyMoney } from '@node_modules/react-icons/gi';
-import DashboardFilter from './DashboardFilter';
+import { GiPayMoney, GiTakeMyMoney } from '@node_modules/react-icons/gi';
 import { getExpenseData } from '@utils/apiExpense';
 import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy';
 import { getBudgetData } from '@utils/apiBudget';
