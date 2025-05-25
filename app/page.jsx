@@ -1,9 +1,11 @@
 "use client";
 
+import LoadingSpinner from "./reusables/UI_components/LoadingSpinner";
+
 const Home = () => {
 
   return (
-    <div style={container}>ABDI</div>
+    <div style={container}><LoadingSpinner/></div>
   )
 }
 
