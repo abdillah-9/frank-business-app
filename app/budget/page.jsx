@@ -37,7 +37,7 @@ export default function page() {
     const formState = useSelector((store)=>store.ReduxState.showForm);
     const overlayState = useSelector((store)=>store.ReduxState.overlay);
     //Now lets use the React Query to fetch data from supabase
-    const {isLoading: budgetIsLoading, data: budget, error} =  useQuery({
+    const {data: budget, isLoading: budgetIsLoading, error} =  useQuery({
       queryKey: ['budgetData'],
       queryFn: getBudgetData
     });
@@ -49,7 +49,7 @@ export default function page() {
       }
     },[budget])
 
-  if(!user || budgetIsLoading){
+  if(!user || fetched.budgetData.length === 0){
     return <LoadingSpinner/>
   }
   
