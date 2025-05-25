@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import Insights from './Insights'
-import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy'
+import { useQuery } from '@tanstack/react-query'
 import { getBudgetData } from '@utils/apiBudget'
 import { getExpenseData } from '@utils/apiExpense'
 import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner'
@@ -77,9 +77,7 @@ export default function page() {
     useEffect(()=>{
         if (!budgetStats || budgetStats.length === 0) {
             console.log("budgetStats is empty, not sending to backend yet.");
-            return(
-                "budgetStats is empty, not sending to backend yet."              
-            );
+            return;
         }
     
         console.log("budgetStats", JSON.stringify(budgetStats));
