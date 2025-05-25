@@ -57,7 +57,6 @@ export default function page() {
     dispatch(setReduxState({showForm: !formState, overlay: !overlayState,fetchedFormData: false}));
   }
 
-  let sortByString = "all"
   function sortButtonHandler(sortByString){
     let budgetData;
 
@@ -77,6 +76,11 @@ export default function page() {
     else if(sortByString == "expired"){
       setSortState(sortByString)
       budgetData = budget.filter((row)=>row.userID == user.id && row.status == "expired")
+    }
+    else{
+      setSortState(sortByString)
+      expenseData = expense.filter((row)=>row.userID == user.id)
+      budgetData = budget.filter((row)=>row.userID == user.id)  
     }
 
     setFetched({budgetData})
