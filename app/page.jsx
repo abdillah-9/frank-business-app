@@ -8,7 +8,7 @@ const Home = () => {
 
   return (
     <div style={container}>
-      <Logo><Image height={100} width={100} alt=""/></Logo>
+      <Logo><Image height={100} width={100} alt="" src={"/assets/images/logo.svg"}/></Logo>
     </div>
   )
 }
