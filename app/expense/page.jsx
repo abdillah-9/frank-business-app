@@ -181,6 +181,11 @@ export default function page() {
 }
 
 //CSS
+const iconStyle={
+  padding:"0px 20px",
+  fontSize:"16px",
+  color:"rgba(79, 8, 161, 0.76)",
+}
 const expensContainer={
   display:"flex",
   flexDirection:"column",
