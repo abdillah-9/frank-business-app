@@ -66,7 +66,7 @@ export default function page() {
     return (
             <div style={{fontSize:"14px", justifyContent:"center",display:"flex", gap:"20px",
             width:"100%",height:"100%", alignItems:"center",border:"1px solid red"}}>
-              <div>No data can be shown, please insert new to get started!</div> 
+              <div>No data can be shown, please insert new to get started...</div> 
               <Icon iconStyle={iconStyle}><TbMoodEmpty/></Icon> 
             </div>
             )
