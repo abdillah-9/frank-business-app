@@ -53,7 +53,8 @@ export default function page() {
     return <LoadingSpinner/>
   }
   if(fetched.budgetData.length === 0){
-    return "No budget available, please create one to get started!"
+    return <div style={{fontSize:"14px", width:"100%", alignItems:"center"}}>
+      No data can be shown, please insert new to get started!</div>
   }
   
   function createHandlerFunc(){
