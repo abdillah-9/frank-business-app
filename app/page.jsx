@@ -1,11 +1,15 @@
 "use client";
 
+import Image from "@node_modules/next/image";
 import LoadingSpinner from "./reusables/UI_components/LoadingSpinner";
+import Logo from "./reusables/UI_components/Logo";
 
 const Home = () => {
 
   return (
-    <div style={container}><LoadingSpinner/></div>
+    <div style={container}>
+      <Logo><Image height={100} width={100} alt=""/></Logo>
+    </div>
   )
 }
 
