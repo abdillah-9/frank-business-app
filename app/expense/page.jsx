@@ -61,6 +61,9 @@ export default function page() {
   if(!user || expenseLoading || budgetLoading){
     return <LoadingSpinner/>
   }
+  if(fetched.budgetData.length == 0 || fetched.expenseData.length == 0){
+    return "No data can be shown, please inser new to get started!"
+  }
 
   function showFormHandler(){
     dispatch(setReduxState({showForm: !formState, overlay: !overlayState, fetchedFormData: false}));
