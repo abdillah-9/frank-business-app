@@ -20,6 +20,7 @@ import { useDeleteFormData } from './expenseHooks/useDeleteExpense'
 import { useUpdateFormData } from './expenseHooks/useUpdateExpense'
 import Pagination from '@app/reusables/UI_components/Pagination'
 import { HiChevronLeft, HiChevronRight, HiOutlineChevronLeft } from '@node_modules/react-icons/hi2'
+import { TbMoodEmpty } from '@node_modules/react-icons/tb'
 
 export default function page() {
   //Using React Query to fetch data from supabase
@@ -62,7 +63,9 @@ export default function page() {
     return <LoadingSpinner/>
   }
   if(fetched.budgetData.length == 0 || fetched.expenseData.length == 0){
-    return "No data can be shown, please inser new to get started!"
+    return <div style={{fontSize:"14px", width:"100%", alignItems:"center"}}>
+      No data can be shown, please insert new to get started! 
+      <Icon iconStyle={iconStyle}><TbMoodEmpty/></Icon> </div>
   }
 
   function showFormHandler(){
