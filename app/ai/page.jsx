@@ -77,7 +77,9 @@ export default function page() {
     useEffect(()=>{
         if (!budgetStats || budgetStats.length === 0) {
             console.log("budgetStats is empty, not sending to backend yet.");
-            return;
+            return(
+                "budgetStats is empty, not sending to backend yet."              
+            );
         }
     
         console.log("budgetStats", JSON.stringify(budgetStats));
