@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import Insights from './Insights'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy'
 import { getBudgetData } from '@utils/apiBudget'
 import { getExpenseData } from '@utils/apiExpense'
 import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner'
@@ -23,17 +23,13 @@ export default function page() {
 
     const [budgetStats, setBudgetStats] = useState([])
     const [AI_response, setAI_response] = useState("")
-    
-    if(budgetLoading || expenseLoading){
-        return <LoadingSpinner/> 
-    }
-    if(!user || !budget || !expense){
-        return "Data not found" 
-    }
 
     // create array containing budgets with sum of its expenses 
     // structure should be as const combinedData = [budgetID,budgetName,budgetAmount,expenseTotal]
     useEffect(()=>{
+        if(!user || !budget || !expense){
+            return; 
+        }
 
         // *** First calculate total for each expense sumOfEachExpense = [{expenseID,expenseTotal}] *** //
         const sumOfEachExpense = expense.filter((exp)=> exp.userID == user.id)
