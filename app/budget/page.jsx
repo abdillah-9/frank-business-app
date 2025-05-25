@@ -57,6 +57,7 @@ export default function page() {
     dispatch(setReduxState({showForm: !formState, overlay: !overlayState,fetchedFormData: false}));
   }
 
+  let sortByString = "all"
   function sortButtonHandler(sortByString){
     let budgetData;
 
