@@ -6,6 +6,8 @@ import { getBudgetData } from '@utils/apiBudget'
 import { getExpenseData } from '@utils/apiExpense'
 import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner'
 import useUser from '@app/authentication/hooks/useUser'
+import Icon from '@app/reusables/UI_components/Icon'
+import { TbMoodEmptyFilled } from '@node_modules/react-icons/tb'
 
 export default function page() {
     //Import user, budget and expense data here
@@ -106,9 +108,23 @@ export default function page() {
         {
             userLoading || expenseLoading || budgetLoading ? 
             <LoadingSpinner/> : 
-            !AI_response ? <div>Data not found...</div> : 
+            !AI_response ? 
+            <div style={{fontSize:"14px", display:"flex", gap:"10px",
+            width:"100%",height:"100%", alignItems:"center", flexDirection:"column"}}>
+              <div>It looks like you have neither expenses nor budgets,
+                please insert new data to receive AI-insights...</div> 
+              <Icon iconStyle={iconStyle}><TbMoodEmptyFilled/></Icon> 
+            </div> 
+            : 
             <Insights data={AI_response} stats={budgetStats}/> 
         }
     </div>
   )
+}
+
+//CSS
+const iconStyle={
+  padding:"0px 5px",
+  fontSize:"35px",
+  color:"rgba(79, 8, 161, 0.76)",
 }
