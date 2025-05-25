@@ -8,7 +8,9 @@ const Home = () => {
 
   return (
     <div style={container}>
-      <Logo><Image height={100} width={100} alt="" src={"/assets/images/logo.svg"}/></Logo>
+      <Logo>
+        <Image className="logoAnimation" height={70} width={70} alt="" src={"/assets/images/logo.svg"}/>
+      </Logo>
     </div>
   )
 }
@@ -19,7 +21,7 @@ const container = {
   width:'100vw',
   height:"100vh",
   display:"flex",
-  alignitems:"center",
+  alignItems:"center",
   justifyContent:"center",
   position:"fixed",
   top:0,
