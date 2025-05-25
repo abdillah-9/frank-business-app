@@ -11,8 +11,8 @@ const Home = () => {
 
 //Css
 const container = {
-  width:'100%',
-  height:"10vh",
+  width:'100vw',
+  height:"100vh",
   display:"flex",
   alignitems:"center",
   justifyContent:"center",
