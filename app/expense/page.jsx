@@ -47,7 +47,7 @@ export default function page() {
   });
 
   useEffect(()=>{
-    if(expense && budget){
+    if(expense && budget && user){
       let expenseData = expense.filter((row)=>row.userID == user.id)
       let budgetData = budget.filter((row)=>row.userID == user.id)
       setFetched({expenseData, budgetData});
@@ -86,6 +86,12 @@ export default function page() {
       setSortState(sortByString)
       expenseData = expense.filter((row)=>row.userID == user.id && row.status == "unConfirmed")
       budgetData = budget.filter((row)=>row.userID == user.id)
+    }
+
+    else{
+      setSortState(sortByString)
+      expenseData = expense.filter((row)=>row.userID == user.id)
+      budgetData = budget.filter((row)=>row.userID == user.id)  
     }
 
     setFetched({expenseData,budgetData})
