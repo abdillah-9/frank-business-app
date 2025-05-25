@@ -32,7 +32,6 @@ export default function TopNavBar() {
     width:50,
     height:50,
     alt:"",
-    unoptimized
   }
 
   const {logOut} = useLogOut();

@@ -20,7 +20,7 @@ import { useDeleteFormData } from './expenseHooks/useDeleteExpense'
 import { useUpdateFormData } from './expenseHooks/useUpdateExpense'
 import Pagination from '@app/reusables/UI_components/Pagination'
 import { HiChevronLeft, HiChevronRight, HiOutlineChevronLeft } from '@node_modules/react-icons/hi2'
-import { TbMoodEmpty } from '@node_modules/react-icons/tb'
+import { TbMoodEmpty, TbMoodEmptyFilled } from '@node_modules/react-icons/tb'
 
 export default function page() {
   //Using React Query to fetch data from supabase
@@ -64,12 +64,12 @@ export default function page() {
   }
   if(fetched.budgetData.length == 0 || fetched.expenseData.length == 0){
     return (
-            <div style={{fontSize:"14px", justifyContent:"center",display:"flex", gap:"20px",
-            width:"100%",height:"100%", alignItems:"center",border:"1px solid red"}}>
+            <div style={{fontSize:"14px", display:"flex", gap:"10px",
+            width:"100%",height:"100%", alignItems:"center", flexDirection:"column"}}>
               <div>No data can be shown, please insert new to get started...</div> 
-              {/* <Icon iconStyle={iconStyle}><TbMoodEmpty/></Icon>  */}
+              <Icon iconStyle={iconStyle}><TbMoodEmptyFilled/></Icon> 
             </div>
-            )
+    )
   }
 
   function showFormHandler(){
@@ -187,7 +187,7 @@ export default function page() {
 //CSS
 const iconStyle={
   padding:"0px 5px",
-  fontSize:"25px",
+  fontSize:"35px",
   color:"rgba(79, 8, 161, 0.76)",
 }
 const expensContainer={

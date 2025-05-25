@@ -21,11 +21,12 @@ export function NavIcon({navIconStyle, children, iconEvent}){
 }
 export function NavImage({imageAttributes}){
     return(
-        <img
+        <Image
         src={imageAttributes.src} 
         height={imageAttributes.height}
         width={imageAttributes.width}
         alt={imageAttributes.alt}
+        unoptimized
         />
     )
 }
