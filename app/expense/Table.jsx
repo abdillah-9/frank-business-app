@@ -11,7 +11,7 @@ import { useDispatch } from '@node_modules/react-redux/dist/react-redux';
 import toast from '@node_modules/react-hot-toast/dist';
 import { IoWarning } from '@node_modules/react-icons/io5';
 
-export default function Table({expense, user, budget, pageRows,pageNumber}) {
+export default function Table({expense, user, budget, pageRows,pageNumber, expenseTotalByBudgetId}) {
 
   //CSS
   const unConfirmed = {
@@ -38,17 +38,7 @@ export default function Table({expense, user, budget, pageRows,pageNumber}) {
     return <LoadingSpinner/>
   }
 
-  let expenseTotalById="";
-  if(expense){
-    expenseTotalById = expense.filter((expenseRow)=>expenseRow.userID === user.id).reduce(
-      (acc, expense)=>{
-        if(!acc[expense.budgetID]){ acc[expense.budgetID] = 0 }
-        acc[expense.budgetID]+= expense.amount
-        return acc
-      },{}
-    )
-  }
-  console.log("THis is expensivTatoalByID "+JSON.stringify(expenseTotalById))
+  console.log("THis is expensivTatoalByID "+JSON.stringify(expenseTotalByBudgetId))
 
   const dispatch = useDispatch();
     function deleteAction(rowID){
@@ -97,21 +87,29 @@ export default function Table({expense, user, budget, pageRows,pageNumber}) {
                   <TD styleTD={tCell}>{expenseRow.name}</TD>
                   <TD styleTD={tCell}>
                     {
-                      budget? 
-                      budget.filter((budg)=>budg.id === expenseRow.budgetID)
-                      .map((budgetRow)=>{
-                        const isExceeded = expenseTotalById[budgetRow.id] > budgetRow.amount;
-                        return(
-                          <div key={budgetRow.id} style={isExceeded? exceeded:{}}>
-                            <span>{budgetRow.name}</span>
-                            <Icon iconStyle={isExceeded? warningIcon : {display:"none"}} 
-                            className={"warningAnime"} clickAction={exceededPrompt}>
-                              <IoWarning/>
-                            </Icon>
-                          </div>
-                        )
-                      }) :""
+                      budget ? 
+                        budget.filter((budg) => budg.id === expenseRow.budgetID)
+                        .map((budgetRow) => {
+                          const matched = expenseTotalByBudgetId.find(e => e.budgetID === budgetRow.id);
+                          const totalExpense = matched ? matched.totalExpense : 0;
+                          const isExceeded = totalExpense > budgetRow.amount;
+
+                          return (
+                            <div key={budgetRow.id} style={isExceeded ? exceeded : {}}>
+                              <span>{budgetRow.name}</span>
+                              <Icon
+                                iconStyle={isExceeded ? warningIcon : { display: "none" }}
+                                className={"warningAnime"}
+                                clickAction={exceededPrompt}
+                              >
+                                <IoWarning />
+                              </Icon>
+                            </div>
+                          );
+                        })
+                      : ""
                     }
+
                   </TD>
                   <TD styleTD={tCell}>{expenseRow.description}</TD>
                   <TD styleTD={tCell}>{expenseRow.amount+"TSh"}</TD>
