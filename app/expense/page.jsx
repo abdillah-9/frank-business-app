@@ -62,6 +62,26 @@ export default function page() {
   if(!user || expenseLoading || budgetLoading){
     return <LoadingSpinner/>
   }
+    
+  let expenseTotalByBudgetId = [];
+
+  if (expense) {
+    const grouped = expense
+      .filter(expenseRow => expenseRow.userID === user.id)
+      .reduce((acc, expense) => {
+        if (!acc[expense.budgetID]) acc[expense.budgetID] = 0;
+        acc[expense.budgetID] += expense.amount;
+        return acc;
+      }, {});
+
+    // Convert to array of { budgetID, totalExpense }
+    expenseTotalByBudgetId = Object.entries(grouped).map(([budgetID, totalExpense]) => ({
+      budgetID: Number(budgetID),
+      totalExpense
+    }));
+  }
+
+
   if(fetched.budgetData.length == 0 || fetched.expenseData.length == 0){
     return (
             <div style={{fontSize:"14px", display:"flex", gap:"10px", justifyContent:"space-between",
@@ -100,7 +120,7 @@ export default function page() {
                 </Button>
               </Container>
               <Form budget={budget} user={user} insertDataMutation={insertDataMutation}
-              updateDataMutation={updateDataMutation}/>
+              updateDataMutation={updateDataMutation} expenseTotalByBudgetId={expenseTotalByBudgetId}/>
             </div>
     )
   }
@@ -155,7 +175,7 @@ export default function page() {
   return (
     <div style={expensContainer}>
       <Form budget={budget} user={user} insertDataMutation={insertDataMutation}
-       updateDataMutation={updateDataMutation}/>
+       updateDataMutation={updateDataMutation} expenseTotalByBudgetId={expenseTotalByBudgetId}/>
       <DeletePrompt mutateDeleting={mutateDeleting}/>
       <Container>
         <Texts textStyle={headingStyle}>All expenses</Texts>
@@ -188,6 +208,7 @@ export default function page() {
           sortState={sortState}
           pageNumber={pageNumber}
           pageRows={pageRows}
+          expenseTotalByBudgetId={expenseTotalByBudgetId}
         />
         <Pagination>
           <Pagination.Desc>

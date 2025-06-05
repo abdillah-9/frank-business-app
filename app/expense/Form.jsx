@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from '@node_modules/react-redux/dist/react-r
 import React from 'react'
 import toast from '@node_modules/react-hot-toast/dist';
 
-export default function Form({budget, insertDataMutation, updateDataMutation, user}) {
+export default function Form({budget, insertDataMutation, updateDataMutation, user, expenseTotalByBudgetId}) {
   let id;let userID;let amount; let name;let description; let date;let photo="";let budgetID;
 
   const {windowSize} = useWindowSize()
@@ -122,13 +122,22 @@ export default function Form({budget, insertDataMutation, updateDataMutation, us
         <FormContainer.Select inputStyle={inputStyle} fieldName={"budgetID"} 
         selected={budgetID} validation={validateBudget}> 
           <FormContainer.Option optionValue={""}></FormContainer.Option>
-        {
-          budget ? budget.filter(exp => exp.userID === user.id).map(budgetRow=> 
-            <FormContainer.Option optionValue={budgetRow.id} key={budgetRow.id}>
-              {budgetRow.name}
-            </FormContainer.Option>
-             ) :""
-        }
+            {
+              budget ? 
+                budget.filter((row)=>user.id == row.userID)
+                .map((budgetRow) => {
+                  const matchedExpense = expenseTotalByBudgetId.find(e => e.budgetID === budgetRow.id);
+                  const totalExpense = matchedExpense ? matchedExpense.totalExpense : 0;
+                  const isExceeded = totalExpense > budgetRow.amount;
+
+                  return !isExceeded ? (
+                    <FormContainer.Option optionValue={budgetRow.id} key={budgetRow.id}>
+                      {budgetRow.name}
+                    </FormContainer.Option>
+                  ) : null;
+                })
+              : ""
+            }
         </FormContainer.Select>
       </FormContainer.Row>
 
