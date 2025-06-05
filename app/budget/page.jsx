@@ -20,6 +20,7 @@ import { getBudgetData } from '@utils/apiBudget'
 import Pagination from '@app/reusables/UI_components/Pagination'
 import { HiChevronLeft, HiChevronRight } from '@node_modules/react-icons/hi2'
 import { TbMoodEmptyFilled } from '@node_modules/react-icons/tb'
+import { getSettingsData } from '@utils/apiSettings'
 
 export default function page() {
   //Using React Query to fetch data from supabase
@@ -30,6 +31,11 @@ export default function page() {
     const [sortState, setSortState] = useState("all");
     const [fetched, setFetched] = useState({
       budgetData:[],
+    })
+    const [settingsData, setSettingsData] = useState([]);
+    const {data: settings, isLoading: settingsLoading} = useQuery({
+        queryKey:["settingsData"],
+        queryFn: getSettingsData
     })
     const [pageNumber, setPageNumber] = useState(1);
     const [pageRows, setPageRows] = useState(4);
@@ -44,13 +50,14 @@ export default function page() {
     });
 
     useEffect(()=>{
-      if(budget && user){
+      if(budget && user && settings){
         let budgetData = budget.filter((row)=>row.userID == user.id)
         setFetched({budgetData});
+        setSettingsData(settings.filter((row)=>row.userID == user.id))
       }
-    },[budget, user])
+    },[budget, user, settings])
 
-  if(!user || !budget){
+  if(!user || !budget || !settings){
     return <LoadingSpinner/>
   }
   
@@ -95,7 +102,9 @@ export default function page() {
                   <Icon><BiAddToQueue /></Icon>Create budget
                 </Button>
               </Container>
-              <Form updateDataMutation={updateDataMutation} insertDataMutation={insertDataMutation} user={user}/>
+              <Form updateDataMutation={updateDataMutation} settingsData={settingsData}
+              insertDataMutation={insertDataMutation} user={user}
+              />
             </div>
     )
   }
@@ -142,7 +151,8 @@ export default function page() {
 
   return (
     <div style={expensContainer}>
-      <Form updateDataMutation={updateDataMutation} insertDataMutation={insertDataMutation} user={user}/>
+      <Form updateDataMutation={updateDataMutation} 
+      insertDataMutation={insertDataMutation} user={user} settingsData={settingsData}/>
       <DeletePrompt mutateDeleting={mutateDeleting}/>
       <Container>
         <Texts textStyle={headingStyle}>All budgets</Texts>

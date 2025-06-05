@@ -6,7 +6,7 @@ export default function DynamicPage({children}) {
 const dynamicPage={
   width:"100%",
   height:"90vh",
-  padding:"15px 30px",
+  padding:"15px 10px",
 }
 
   return (

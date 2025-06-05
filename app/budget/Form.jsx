@@ -6,12 +6,14 @@ import { HiXCircle } from '@node_modules/react-icons/hi2';
 import { useDispatch, useSelector } from '@node_modules/react-redux/dist/react-redux';
 import React from 'react'
 import toast from '@node_modules/react-hot-toast';
+import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy';
 
-export default function Form({insertDataMutation, updateDataMutation, user}) {
+export default function Form({insertDataMutation, updateDataMutation, user, settingsData}) {
   const formState = useSelector((store)=>store.ReduxState.showForm);
   const newData = useSelector((store)=>store.ReduxState.fetchedFormData);
   const dispatch = useDispatch();
   const {windowSize} = useWindowSize();
+  const {} = useQuery
 
   let id=""; let userID = "";
   let amount=""; let name=""; let category=""; let status=""; let description=""; let startDate=""; let endDate="";
@@ -76,7 +78,7 @@ export default function Form({insertDataMutation, updateDataMutation, user}) {
     gap:"10px",
     alignItems:"center",
   }
-
+  console.log(settingsData)
 
   return (
     <FormContainer formContainer={form} handleClose={handleShowForm} formSubmit={formSubmit} onError={onError}>
@@ -111,10 +113,14 @@ export default function Form({insertDataMutation, updateDataMutation, user}) {
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}>category</FormContainer.Label>
-        <FormContainer.Select inputStyle={inputStyle} fieldName={"category"} > 
-          <FormContainer.Option optionValue={"food"}>food</FormContainer.Option>
-          <FormContainer.Option optionValue={"transport"}>transport</FormContainer.Option>
-          <FormContainer.Option optionValue={"clothes"}>clothes</FormContainer.Option>
+        <FormContainer.Select inputStyle={inputStyle} fieldName={"category"} >
+          {
+            settingsData? settingsData.map((row, index)=>
+              <FormContainer.Option optionValue={settingsData.budget_categories} key={index}>
+                {row.budget_categories}
+              </FormContainer.Option>
+            ):"you have no categories please create them in settings menu ..."
+          } 
         </FormContainer.Select>
       </FormContainer.Row>
 
