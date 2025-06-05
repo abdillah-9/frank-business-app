@@ -11,6 +11,7 @@ import Link from '@node_modules/next/link';
 import { setReduxState } from '@app/provider/redux/reducer';
 import { BsRobot } from '@node_modules/react-icons/bs';
 import {VscRobot} from "@node_modules/react-icons/vsc"
+import { IoSettingsOutline } from '@node_modules/react-icons/io5';
 
 const LeftNavBar = () => {
 
@@ -87,6 +88,13 @@ useEffect(() => {
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><VscRobot/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
             <Link href="/ai" onClick={linkClickEvent}>AI-insights</Link>
+          </NavBarTemp.NavText>        
+      </NavBarTemp.NavContainer>
+
+      <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
+        <NavBarTemp.NavIcon navIconStyle={navIconStyle}><IoSettingsOutline/></NavBarTemp.NavIcon>
+          <NavBarTemp.NavText navTextStyle={navTextStyle}>
+            <Link href="/settings" onClick={linkClickEvent}>Settings</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
 

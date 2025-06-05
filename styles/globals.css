@@ -34,6 +34,14 @@
   100% { transform: scale(1); opacity: 0.5;}
 }
 
+.categoriesAnime{
+  transform: scale(1);
+  cursor: pointer;
+}
+.categoriesAnime:hover{
+  transform: scale(1.2);
+}
+
 .numbers, .buttons{
   display: flex;width: 50%;padding: 16px;border:1px solid rgb(67, 53, 53);
   justify-content: space-between;justify-self: center;align-self: center;
