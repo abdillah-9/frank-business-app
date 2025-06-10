@@ -157,6 +157,7 @@ export default function Form(
       toast.error("You can't spend more than "+amountDiff+" Tsh");
       return
     }
+    setDisabled({disabled:"", notAllowed:""})
   }
 
   function handleBudget(e) {
