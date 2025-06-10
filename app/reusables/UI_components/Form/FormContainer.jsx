@@ -16,6 +16,10 @@ const FormContainer = (
         handleClose,
         selectedDate,
         setSelectedDate,
+        selectedBudget,
+        setSelectedBudget,
+        enteredAmount,
+        setEnteredAmount,
     })=>{
     
     // Import conf of react hook form
@@ -30,7 +34,19 @@ const FormContainer = (
 
     // The end
     return(
-        <FormContext value={{handleClose, register, setValue, control, watch,selectedDate,setSelectedDate}}>
+        <FormContext value={{
+            handleClose, 
+            register, 
+            setValue, 
+            control, 
+            watch,
+            selectedDate,
+            setSelectedDate,
+            selectedBudget,
+            setSelectedBudget,
+            enteredAmount,
+            setEnteredAmount,
+        }}>
             <form style={formContainer} onSubmit={handleSubmit(onSubmitData, onError)} 
             onClick={(e)=>e.stopPropagation()}>
                 {children}
@@ -70,12 +86,21 @@ const Text = ({
 }
 
 //FormModel.Number
-const Number = ({fieldName="", number=0, inputStyle="", validation=""})=>{
-    const {register} = useContext(FormContext);
+const Number = ({fieldName="", number=0, inputStyle="", validation="", max, min, onInput})=>{
+    const {register, setValue, setEnteredAmount, enteredAmount} = useContext(FormContext);
     return(
-        <input type="number" style={inputStyle} defaultValue={number} {...register(fieldName,{
-          validate:validation,
-          })}/>
+        <input type="number" 
+            style={inputStyle} 
+            defaultValue={number} {...register(fieldName,{
+                validate:validation,
+            })} 
+            max={max} min={min}
+            onInput={(e)=>{
+                setEnteredAmount(e.target.value);
+                setValue(fieldName, e.target.value);
+                if (onInput) onInput(e);
+            }}
+        />
     )
 }
 
@@ -142,43 +167,69 @@ const SubmitRow = ({children, submitRow})=>{
 }
 
 //Here We define FormModel.Select
+// const Select = ({
+//   children,
+//   fieldName,
+//   selected,
+//   inputStyle,
+//   validation = "",
+//   onChange,
+// }) => {
+//   const { register, setValue, watch, selectedBudget, setSelectedBudget } = useContext(FormContext);
+//   const fieldValue = watch(fieldName); // get current value of the field
+
+//   function handleOptionChange(event) {
+//     const selectedOption = event.target.value || "";
+//     setValue(fieldName, selectedOption); // update form state
+
+//     console.log("Selected option:", selectedOption);
+
+//     if (onChange) {
+//       onChange(selectedOption);
+//     }
+//   }
+
+//   return (
+//     <select
+//       style={inputStyle}
+//       value={fieldValue ?? ""} // use current value from form state
+//       {...register(fieldName, {
+//         validate: validation,
+//       })}
+//       onChange={handleOptionChange}
+//     >
+//       {children}
+//     </select>
+//   );
+// };
+
 const Select = ({
   children,
   fieldName,
   selected,
   inputStyle,
   validation = "",
-  onChange,
+  onInput,
 }) => {
-  const { register, setValue, watch } = useContext(FormContext);
-  const fieldValue = watch(fieldName); // get current value of the field
-
-  function handleOptionChange(event) {
-    const selectedOption = event.target.value || "";
-    setValue(fieldName, selectedOption); // update form state
-
-    console.log("Selected option:", selectedOption);
-
-    if (onChange) {
-      onChange(selectedOption);
-    }
-  }
+  const { register, setValue, watch, selectedBudget, setSelectedBudget } = useContext(FormContext);
 
   return (
     <select
       style={inputStyle}
-      value={fieldValue ?? ""} // use current value from form state
+      //value={fieldValue ?? ""} 
       {...register(fieldName, {
         validate: validation,
       })}
-      onChange={handleOptionChange}
+      onInput={(e)=>{
+        setSelectedBudget(e.target.value);
+        setValue(fieldName, e.target.value);
+        if (onInput) onInput(e);
+      }}
     >
       {children}
     </select>
   );
 };
-
-
 
 //FormModel.File
 const File = ({fileName, children,images: imageUrl, fStyles, validation})=>{
@@ -217,10 +268,21 @@ const File = ({fileName, children,images: imageUrl, fStyles, validation})=>{
     )
 }
 
-//FormModel.File
-const Submit = ({children, submitButton})=>{
+//FormModel.Submit
+const Submit = (
+    {
+        children, 
+        submitButton, 
+        disabled={disabled:"", notAllowed:""}
+    })=>{
     return(
-        <button type="submit" style={submitButton}>{children}</button>
+        <button 
+            type="submit" 
+            style={{...submitButton, cursor:disabled.notAllowed}} 
+            disabled={disabled.disabled}
+        >
+            {children}
+        </button>
     )
 }
 
