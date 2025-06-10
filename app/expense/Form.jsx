@@ -4,15 +4,26 @@ import useWindowSize from '@app/reusables/CUSTOM_hooks/useWindowSize';
 import FormContainer from '@app/reusables/UI_components/Form/FormContainer'
 import { HiXCircle } from '@node_modules/react-icons/hi2';
 import { useDispatch, useSelector } from '@node_modules/react-redux/dist/react-redux';
-import React from 'react'
+import React, { useState } from 'react'
 import toast from '@node_modules/react-hot-toast/dist';
 
-export default function Form({budget, insertDataMutation, updateDataMutation, user, expenseTotalByBudgetId}) {
+export default function Form(
+  {
+    budget, 
+    insertDataMutation, 
+    updateDataMutation, 
+    user, 
+    expenseTotalByBudgetId,
+    selectedDate,
+    setSelectedDate,
+  }) {
   let id;let userID;let amount; let name;let description; let date;let photo="";let budgetID;
+  const today = new Date().toISOString().slice(0,10);
 
   const {windowSize} = useWindowSize()
   const formState = useSelector((store)=>store.ReduxState.showForm);
   const newData = useSelector((store)=>store.ReduxState.fetchedFormData); 
+  //const [selectedDate, setSelectedDate] = useState(today);
   const dispatch = useDispatch();
 
   function handleShowForm(){
@@ -81,8 +92,17 @@ export default function Form({budget, insertDataMutation, updateDataMutation, us
   }
 
   console.log("budget "+budget)
+  console.log("The selectedDate "+selectedDate)
+  console.log("expenseTotalByBudgetId is "+JSON.stringify(expenseTotalByBudgetId))
   return (
-    <FormContainer formContainer={form} handleClose={handleShowForm} formSubmit={formSubmit} onError={onError}>
+    <FormContainer
+      formContainer={form} 
+      handleClose={handleShowForm} 
+      formSubmit={formSubmit} 
+      selectedDate={selectedDate}
+      setSelectedDate={setSelectedDate}
+      onError={onError}
+    >
       <FormContainer.SubmitRow submitRow={submitRow}>
         <FormContainer.Icon iconStyle={cancelIcon} >
           <HiXCircle/>
@@ -105,7 +125,7 @@ export default function Form({budget, insertDataMutation, updateDataMutation, us
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}> date </FormContainer.Label>
-        <FormContainer.Date inputStyle={inputStyle} fieldName={"date"}  date={date}  
+        <FormContainer.Date inputStyle={inputStyle} fieldName={"date"}  date={today}  
           validation={validatedate}/>
       </FormContainer.Row>
 
@@ -117,18 +137,38 @@ export default function Form({budget, insertDataMutation, updateDataMutation, us
         </FormContainer.Select>
       </FormContainer.Row>
 
-      <FormContainer.Row formRow={formRow}>
+      {/* <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}>budget name</FormContainer.Label>
         <FormContainer.Select inputStyle={inputStyle} fieldName={"budgetID"} 
         selected={budgetID} validation={validateBudget}> 
+          <FormContainer.Option optionValue={""}></FormContainer.Option>
+        </FormContainer.Select>
+      </FormContainer.Row> */}
+
+      <FormContainer.Row formRow={formRow}>
+        <FormContainer.Label labelStyle={labelStyle}>budget name</FormContainer.Label>
+        <FormContainer.Select inputStyle={inputStyle} fieldName={"budgetID"} 
+        selected={budgetID} validation={validateBudget}
+        onChange={(value) => console.log("Selected:", value)}> 
           <FormContainer.Option optionValue={""}></FormContainer.Option>
             {
               budget ? 
                 budget.filter((row)=>user.id == row.userID)
                 .map((budgetRow) => {
-                  const matchedExpense = expenseTotalByBudgetId.find(e => e.budgetID === budgetRow.id);
+                  const matchedExpense = expenseTotalByBudgetId
+                    .find(e => e.budgetID === budgetRow.id && e.date == selectedDate);
                   const totalExpense = matchedExpense ? matchedExpense.totalExpense : 0;
-                  const isExceeded = totalExpense > budgetRow.amount;
+                  //const isExceeded = totalExpense > budgetRow.amount;
+
+                  //calculate day budget amount
+                  let daylyBudget = Math.floor(budgetRow.amount / 
+                    ((new Date(budgetRow.endDate).getTime())/(1000 * 60 * 60 * 24) - 
+                    (new Date(budgetRow.startDate).getTime())/(1000 * 60 * 60 * 24) ));
+                    console.log("dayly budget "+daylyBudget);
+
+                  console.log("expense total by id in specific date "+JSON.stringify(expenseTotalByBudgetId));  
+                  console.log("Total exp "+totalExpense+" and daily budget"+daylyBudget);
+                  const isExceeded = totalExpense >= daylyBudget;
 
                   return !isExceeded ? (
                     <FormContainer.Option optionValue={budgetRow.id} key={budgetRow.id}>

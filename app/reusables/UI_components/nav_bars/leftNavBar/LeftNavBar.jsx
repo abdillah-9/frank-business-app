@@ -12,6 +12,7 @@ import { setReduxState } from '@app/provider/redux/reducer';
 import { BsRobot } from '@node_modules/react-icons/bs';
 import {VscRobot} from "@node_modules/react-icons/vsc"
 import { IoSettingsOutline } from '@node_modules/react-icons/io5';
+import { FaPhp } from '@node_modules/react-icons/fa6';
 
 const LeftNavBar = () => {
 
@@ -97,6 +98,13 @@ useEffect(() => {
             <Link href="/settings" onClick={linkClickEvent}>Settings</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
+
+      {/* <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
+        <NavBarTemp.NavIcon navIconStyle={navIconStyle}><FaPhp/></NavBarTemp.NavIcon>
+          <NavBarTemp.NavText navTextStyle={navTextStyle}>
+            <Link href="/apiPHP" onClick={linkClickEvent}>testingPHPAPI</Link>
+          </NavBarTemp.NavText>        
+      </NavBarTemp.NavContainer> */}
 
     </NavBarTemp> :""
   )

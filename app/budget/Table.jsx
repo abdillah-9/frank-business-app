@@ -27,19 +27,26 @@ export default function Table({user, budget, pageNumber, pageRows}) {
     console.log("fetchedFormData after clicking edit icon "+JSON.stringify(budgetRow))
   }
 
-//CSS 
-const expired = {
-  backgroundColor:"rgba(204, 7, 7, 0.37)",
-  color:"rgb(68, 1, 1)",
-}
-const active = {
-  backgroundColor:"rgba(3, 196, 67, 0.37)",
-  color:"rgb(6, 43, 1)",
-}
-const upcoming = {
-  backgroundColor:"rgba(4, 171, 201, 0.37)",
-  color:"rgb(1, 37, 43)",
-}
+  //CSS 
+  const expired = {
+    backgroundColor:"rgba(204, 7, 7, 0.37)",
+    color:"rgb(68, 1, 1)",
+  }
+  const active = {
+    backgroundColor:"rgba(3, 196, 67, 0.37)",
+    color:"rgb(6, 43, 1)",
+  }
+  const upcoming = {
+    backgroundColor:"rgba(4, 171, 201, 0.37)",
+    color:"rgb(1, 37, 43)",
+  }
+
+  //calculate budget days
+  // $daysSince1970 = (new Date().getSeconds)*(60 *24)
+  // $daysSinceStartDate = (new Date(startDate).getSeconds)*(60 *24)
+  // $daysSinceEndDate = (new Date(endDate).getSeconds)*(60 *24)
+  // $budgetDays = 
+  let daysDiference;
 
   return (
         <TableContainer styleTable={tableContainer}>
@@ -52,6 +59,7 @@ const upcoming = {
               <TH styleTH={tCell}>DESCRIPTION</TH>
               <TH styleTH={tCell}>START DATE</TH>
               <TH styleTH={tCell}>END DATE</TH>
+              <TH styleTH={tCell}>BUDGET LENGTH</TH>
               <TH styleTH={tCell}>ACTIONS</TH>
             </TR>
           </THead>
@@ -74,6 +82,12 @@ const upcoming = {
                   <TD>{budgetRow.description}</TD>
                   <TD styleTD={tCell}>{budgetRow.startDate}</TD>
                   <TD styleTD={tCell}>{budgetRow.endDate}</TD>
+                  <TD styleTD={tCell}>
+                    {
+                      daysDiference = (new Date(budgetRow.endDate).getTime())/(1000 * 60 * 60 * 24) - 
+                             (new Date(budgetRow.startDate).getTime())/(1000 * 60 * 60 * 24)+" days" 
+                    }
+                  </TD>
                   <TD styleTD={tCellActions}>
                     <Icon clickAction={()=>editAction(budgetRow)} title={"edit"}>
                       <HiOutlinePencil/>

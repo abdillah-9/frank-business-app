@@ -11,7 +11,17 @@ import { useDispatch } from '@node_modules/react-redux/dist/react-redux';
 import toast from '@node_modules/react-hot-toast/dist';
 import { IoWarning } from '@node_modules/react-icons/io5';
 
-export default function Table({expense, user, budget, pageRows,pageNumber, expenseTotalByBudgetId}) {
+export default function Table(
+  {
+    expense, 
+    user, 
+    budget, 
+    pageRows,
+    pageNumber, 
+    expenseTotalByBudgetId, 
+    selectedDate,
+    setSelectedDate,
+  }) {
 
   //CSS
   const unConfirmed = {
@@ -38,7 +48,7 @@ export default function Table({expense, user, budget, pageRows,pageNumber, expen
     return <LoadingSpinner/>
   }
 
-  console.log("THis is expensivTatoalByID "+JSON.stringify(expenseTotalByBudgetId))
+  console.log("This is expenseTotalByBudgetId "+JSON.stringify(expenseTotalByBudgetId))
 
   const dispatch = useDispatch();
     function deleteAction(rowID){
@@ -90,10 +100,20 @@ export default function Table({expense, user, budget, pageRows,pageNumber, expen
                       budget ? 
                         budget.filter((budg) => budg.id === expenseRow.budgetID)
                         .map((budgetRow) => {
-                          const matched = expenseTotalByBudgetId.find(e => e.budgetID === budgetRow.id);
+                          const matched = expenseTotalByBudgetId
+                          .find(e => e.budgetID === budgetRow.id && e.date == selectedDate);
                           const totalExpense = matched ? matched.totalExpense : 0;
-                          const isExceeded = totalExpense > budgetRow.amount;
 
+                          //calculate day budget amount
+                          let daylyBudget = Math.floor(budgetRow.amount / 
+                            ((new Date(budgetRow.endDate).getTime())/(1000 * 60 * 60 * 24) - 
+                            (new Date(budgetRow.startDate).getTime())/(1000 * 60 * 60 * 24) ));
+                            console.log("dayly budget "+daylyBudget);
+
+                          console.log("expense total by id in specific date "+expenseTotalByBudgetId);  
+                          console.log("Total exp "+totalExpense+" and daily budget"+daylyBudget);
+                          const isExceeded = totalExpense >= daylyBudget;
+                          
                           return (
                             <div key={budgetRow.id} style={isExceeded ? exceeded : {}}>
                               <span>{budgetRow.name}</span>
