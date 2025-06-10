@@ -7,10 +7,19 @@ import { useForm } from "@node_modules/react-hook-form";
 const FormContext = createContext();
 
 //Step .2 define the parent component with states if are needed
-const FormContainer = ({children,formContainer,formSubmit,onError, handleClose})=>{
+const FormContainer = (
+    {
+        children,
+        formContainer,
+        formSubmit,
+        onError, 
+        handleClose,
+        selectedDate,
+        setSelectedDate,
+    })=>{
     
     // Import conf of react hook form
-    const {register, handleSubmit, setValue, reset} = useForm();
+    const {register, handleSubmit, setValue, reset, control, watch} = useForm();
 
     function onSubmitData(data){
         formSubmit(data) // On correct form submition
@@ -21,7 +30,7 @@ const FormContainer = ({children,formContainer,formSubmit,onError, handleClose})
 
     // The end
     return(
-        <FormContext value={{handleClose, register, setValue}}>
+        <FormContext value={{handleClose, register, setValue, control, watch,selectedDate,setSelectedDate}}>
             <form style={formContainer} onSubmit={handleSubmit(onSubmitData, onError)} 
             onClick={(e)=>e.stopPropagation()}>
                 {children}
@@ -79,23 +88,18 @@ const Label = ({children, labelStyle})=>{
 
 //FormModel.Date
 const Date = ({inputStyle, date, fieldName, validation})=>{
-    const {register} = useContext(FormContext);
+    const {register, setValue,selectedDate,setSelectedDate} = useContext(FormContext);
+
     return(
-        <input type="date" style={inputStyle} defaultValue={date} {...register(fieldName,{
+        <input type="date" style={inputStyle} defaultValue={date} 
+        onInput={(e)=>{
+            setSelectedDate(e.target.value);
+            setValue(fieldName, e.target.value);
+        }}
+        {...register(fieldName,{
             validate: validation,
-          })} />
+        })} />
     )
-}
-
-//Here We define FormModel.Select
-const Select = ({children,fieldName, selected, inputStyle, validation=""})=>{
-    const {register} = useContext(FormContext);
-    return(
-    <select style={inputStyle} value={selected} {...register(fieldName,{
-        validate: validation,
-    })}> {children}</select>
-
-)
 }
 
 //Here We define FormModel.Option
@@ -136,6 +140,45 @@ const SubmitRow = ({children, submitRow})=>{
         <div style={submitRow}>{children}</div>
     )
 }
+
+//Here We define FormModel.Select
+const Select = ({
+  children,
+  fieldName,
+  selected,
+  inputStyle,
+  validation = "",
+  onChange,
+}) => {
+  const { register, setValue, watch } = useContext(FormContext);
+  const fieldValue = watch(fieldName); // get current value of the field
+
+  function handleOptionChange(event) {
+    const selectedOption = event.target.value || "";
+    setValue(fieldName, selectedOption); // update form state
+
+    console.log("Selected option:", selectedOption);
+
+    if (onChange) {
+      onChange(selectedOption);
+    }
+  }
+
+  return (
+    <select
+      style={inputStyle}
+      value={fieldValue ?? ""} // use current value from form state
+      {...register(fieldName, {
+        validate: validation,
+      })}
+      onChange={handleOptionChange}
+    >
+      {children}
+    </select>
+  );
+};
+
+
 
 //FormModel.File
 const File = ({fileName, children,images: imageUrl, fStyles, validation})=>{

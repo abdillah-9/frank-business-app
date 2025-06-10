@@ -23,12 +23,14 @@ import { HiChevronLeft, HiChevronRight, HiOutlineChevronLeft } from '@node_modul
 import { TbMoodEmpty, TbMoodEmptyFilled } from '@node_modules/react-icons/tb'
 
 export default function page() {
+  const today = new Date().toISOString().slice(0,10);
   //Using React Query to fetch data from supabase
     const {insertDataMutation} = useCreateExpense();
     const {updateDataMutation} = useUpdateFormData();
     const {mutateDeleting} = useDeleteFormData();
     const {user} = useUser();
     const [sortState, setSortState] = useState("all");
+    const [selectedDate, setSelectedDate] = useState(today);
     const [fetched, setFetched] = useState({
       expenseData:[],
       budgetData:[],
@@ -64,22 +66,32 @@ export default function page() {
   }
     
   let expenseTotalByBudgetId = [];
+if (expense) {
+  const currentDay = new Date().toISOString().slice(0, 10);
 
-  if (expense) {
-    const grouped = expense
-      .filter(expenseRow => expenseRow.userID === user.id)
-      .reduce((acc, expense) => {
-        if (!acc[expense.budgetID]) acc[expense.budgetID] = 0;
-        acc[expense.budgetID] += expense.amount;
-        return acc;
-      }, {});
+  console.log("date from DB " + expense[expense.length - 1].date + " and current date " + currentDay);
 
-    // Convert to array of { budgetID, totalExpense }
-    expenseTotalByBudgetId = Object.entries(grouped).map(([budgetID, totalExpense]) => ({
-      budgetID: Number(budgetID),
-      totalExpense
-    }));
-  }
+const grouped = expense
+  .filter(expenseRow => expenseRow.userID === user.id && expenseRow.date)
+  .reduce((acc, expenseRow) => {
+    const key = `${expenseRow.budgetID}_${expenseRow.date}`;
+    if (!acc[key]) {
+      acc[key] = {
+        budgetID: expenseRow.budgetID,
+        date: expenseRow.date,
+        totalExpense: 0,
+      };
+    }
+    acc[key].totalExpense += expenseRow.amount;
+    return acc;
+  }, {});
+
+  expenseTotalByBudgetId = Object.values(grouped);
+
+
+  console.log(JSON.stringify(expenseTotalByBudgetId));
+}
+
 
 
   if(fetched.budgetData.length == 0 || fetched.expenseData.length == 0){
@@ -119,8 +131,14 @@ export default function page() {
                   <Icon><BiAddToQueue /></Icon>Create expense
                 </Button>
               </Container>
-              <Form budget={budget} user={user} insertDataMutation={insertDataMutation}
-              updateDataMutation={updateDataMutation} expenseTotalByBudgetId={expenseTotalByBudgetId}/>
+              <Form 
+                budget={budget} 
+                user={user} 
+                insertDataMutation={insertDataMutation}
+                updateDataMutation={updateDataMutation} 
+                expenseTotalByBudgetId={expenseTotalByBudgetId}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}/>
             </div>
     )
   }
@@ -174,8 +192,9 @@ export default function page() {
 
   return (
     <div style={expensContainer}>
-      <Form budget={budget} user={user} insertDataMutation={insertDataMutation}
-       updateDataMutation={updateDataMutation} expenseTotalByBudgetId={expenseTotalByBudgetId}/>
+      <Form budget={budget} user={user} insertDataMutation={insertDataMutation} selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          updateDataMutation={updateDataMutation} expenseTotalByBudgetId={expenseTotalByBudgetId}/>
       <DeletePrompt mutateDeleting={mutateDeleting}/>
       <Container>
         <Texts textStyle={headingStyle}>All expenses</Texts>
@@ -209,6 +228,8 @@ export default function page() {
           pageNumber={pageNumber}
           pageRows={pageRows}
           expenseTotalByBudgetId={expenseTotalByBudgetId}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
         />
         <Pagination>
           <Pagination.Desc>
