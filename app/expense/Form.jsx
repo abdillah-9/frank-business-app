@@ -23,7 +23,9 @@ export default function Form(
   const {windowSize} = useWindowSize()
   const formState = useSelector((store)=>store.ReduxState.showForm);
   const newData = useSelector((store)=>store.ReduxState.fetchedFormData); 
-  //const [selectedDate, setSelectedDate] = useState(today);
+  const [enteredAmount, setEnteredAmount] = useState(0);
+  const [isDisabled, setDisabled]= useState({disabled:"", notAllowed:""})
+  const [selectedBudget, setSelectedBudget] = useState(null);
   const dispatch = useDispatch();
 
   function handleShowForm(){
@@ -91,6 +93,77 @@ export default function Form(
     alignItems:"center",
   }
 
+  function validateAmount(values){
+    // Check if the value is empty or contains only spaces
+    if (!values || values.trim() === "") {
+      return "budget amount is required";
+    }
+
+    // Regular expression to check for consecutive spaces
+    const consecutiveSpacesRegex = /\s{2,}/;
+
+    // Check if the value contains consecutive spaces
+    if (consecutiveSpacesRegex.test(values)) {
+      return "budget amount cannot contain consecutive spaces";
+    }
+
+    return true; // Return true if validation passes 
+  }
+
+  function handleAmount(e) {
+    let expenseData, dailyBudget, amountDiff;
+    if(!selectedBudget){
+      //setEnteredAmount(0);
+      toast.error("Please select budget first");
+      return
+    }
+    expenseData = expenseTotalByBudgetId.find((e)=>e.budgetID == selectedBudget && e.date == selectedDate);
+    console.log("expenseData "+JSON.stringify(expenseData));
+
+    if (!expenseData){
+      expenseData = {totalExpense :0};
+    }
+
+    //calculate daily budget for this
+    {
+      budget ? 
+        budget.filter((row)=>user.id == row.userID && row.id == selectedBudget)
+        .map((budgetRow) => {
+
+          //calculate day budget amount
+          dailyBudget = Math.floor(budgetRow.amount / 
+            ((new Date(budgetRow.endDate).getTime())/(1000 * 60 * 60 * 24) - 
+            (new Date(budgetRow.startDate).getTime())/(1000 * 60 * 60 * 24) ));
+            console.log("dayly budget "+dailyBudget);
+
+          console.log("expense total by id in specific date "+JSON.stringify(expenseTotalByBudgetId));  
+          console.log("Total exp "+expenseData.totalExpense+" and daily budget"+dailyBudget);
+          amountDiff = dailyBudget - expenseData.totalExpense
+        })
+      : ""
+    }
+
+    console.log("daily budget "+dailyBudget);
+    console.log("daily amountDiff "+amountDiff);
+
+    //Now check if amount is not higher that dailyBudgetLimit
+    if(amountDiff <= 0 ){
+      setDisabled({disabled:"disabled", notAllowed:"not-allowed"});
+      toast.error("You've reached ur expense limit");
+      return
+    }
+    if(e.target.value > amountDiff){
+      setDisabled({disabled:"disabled", notAllowed:"not-allowed"});
+      toast.error("You can't spend more than "+amountDiff+" Tsh");
+      return
+    }
+  }
+
+  function handleBudget(e) {
+    //toast.error("Hellow amount is "+enteredAmount+" and budget id is "+e.target.value)
+  }
+
+
   console.log("budget "+budget)
   console.log("The selectedDate "+selectedDate)
   console.log("expenseTotalByBudgetId is "+JSON.stringify(expenseTotalByBudgetId))
@@ -101,7 +174,11 @@ export default function Form(
       formSubmit={formSubmit} 
       selectedDate={selectedDate}
       setSelectedDate={setSelectedDate}
+      selectedBudget={selectedBudget}
+      setSelectedBudget={setSelectedBudget}
       onError={onError}
+      enteredAmount={enteredAmount}
+      setEnteredAmount={setEnteredAmount}
     >
       <FormContainer.SubmitRow submitRow={submitRow}>
         <FormContainer.Icon iconStyle={cancelIcon} >
@@ -119,8 +196,12 @@ export default function Form(
 
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}> amount </FormContainer.Label>
-        <FormContainer.Number inputStyle={inputStyle} fieldName={"amount"} number={amount} 
-          validation={validateAmount}/>
+        <FormContainer.Number 
+          inputStyle={inputStyle} 
+          fieldName={"amount"} 
+          number={amount} 
+          validation={validateAmount} 
+          onInput={handleAmount}/>
       </FormContainer.Row>
 
       <FormContainer.Row formRow={formRow}>
@@ -149,7 +230,7 @@ export default function Form(
         <FormContainer.Label labelStyle={labelStyle}>budget name</FormContainer.Label>
         <FormContainer.Select inputStyle={inputStyle} fieldName={"budgetID"} 
         selected={budgetID} validation={validateBudget}
-        onChange={(value) => console.log("Selected:", value)}> 
+        onInput={handleBudget}> 
           <FormContainer.Option optionValue={""}></FormContainer.Option>
             {
               budget ? 
@@ -161,14 +242,14 @@ export default function Form(
                   //const isExceeded = totalExpense > budgetRow.amount;
 
                   //calculate day budget amount
-                  let daylyBudget = Math.floor(budgetRow.amount / 
+                  let dailyBudget = Math.floor(budgetRow.amount / 
                     ((new Date(budgetRow.endDate).getTime())/(1000 * 60 * 60 * 24) - 
                     (new Date(budgetRow.startDate).getTime())/(1000 * 60 * 60 * 24) ));
-                    console.log("dayly budget "+daylyBudget);
+                    console.log("dayly budget "+dailyBudget);
 
                   console.log("expense total by id in specific date "+JSON.stringify(expenseTotalByBudgetId));  
-                  console.log("Total exp "+totalExpense+" and daily budget"+daylyBudget);
-                  const isExceeded = totalExpense >= daylyBudget;
+                  console.log("Total exp "+totalExpense+" and daily budget"+dailyBudget);
+                  const isExceeded = totalExpense >= dailyBudget;
 
                   return !isExceeded ? (
                     <FormContainer.Option optionValue={budgetRow.id} key={budgetRow.id}>
@@ -197,7 +278,7 @@ export default function Form(
 
       <FormContainer.SubmitRow submitRow={submitRow}>
         <FormContainer.Cancel cancelStyle={cancelStyle}>Cancel</FormContainer.Cancel>
-        <FormContainer.Submit submitButton={submitButton}>
+        <FormContainer.Submit submitButton={submitButton} disabled={isDisabled}>
           {newData? "Update expense" : "Create expense" }
         </FormContainer.Submit>
         
@@ -321,23 +402,6 @@ const validateDesc = (values)=>{
       return "budget desc must not exceed 15 characters"
     }
   return true; // Return true if validation passes
-}
-
-function validateAmount(values){
-   // Check if the value is empty or contains only spaces
-   if (!values || values.trim() === "") {
-    return "budget amount is required";
-  }
-
-  // Regular expression to check for consecutive spaces
-  const consecutiveSpacesRegex = /\s{2,}/;
-
-  // Check if the value contains consecutive spaces
-  if (consecutiveSpacesRegex.test(values)) {
-    return "budget amount cannot contain consecutive spaces";
-  }
-
-  return true; // Return true if validation passes 
 }
 
 function validatedate(values){
