@@ -26,13 +26,13 @@ export default function page() {
         <Texts textStyle={headingStyle}>Active user</Texts>
       </Container>
       <Container containerStyle={tableContainer}>
-        <Table/>
+        <Table actionHandler={showFormHandler}/>
       </Container>   
-      <Container>
+      {/* <Container>
         <Button buttonStyle={createButton} actionHandler={showFormHandler}>
           <Icon><BiAddToQueue /></Icon>Update user
         </Button>
-      </Container>  
+      </Container>   */}
     </div>
   )
 }
@@ -42,7 +42,7 @@ const expensContainer={
   display:"flex",
   flexDirection:"column",
   gap:"30px",
-  height:"100%",
+  height:"80vh",
 }
 
 const headingStyle={

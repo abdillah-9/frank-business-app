@@ -109,7 +109,7 @@ export default function page() {
             userLoading || expenseLoading || budgetLoading ? 
             <LoadingSpinner/> : 
             AI_response === "" ? 
-            <div style={{fontSize:"14px", display:"flex", gap:"10px",
+            <div style={{fontSize:"14px", display:"flex", gap:"10px", boxShadow:"2px 2px 30px rgb(10,10,10)",
             width:"100%",height:"100%", alignItems:"center", flexDirection:"column"}}>
               <div>It looks like you have neither expenses nor budgets,
                 please insert new data to receive AI-insights...</div> 

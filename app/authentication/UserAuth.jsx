@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import useUser from './hooks/useUser';
 import LoadingSpinner from '@app/reusables/UI_components/LoadingSpinner';
 
-export default function UserAuth() {
+export default function UserAuth({ setActiveLink, isActiveLink }) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -30,6 +30,12 @@ export default function UserAuth() {
     if (isAuthenticated && (isAuthPage || isHomePage)) {
       hasRedirected.current = true;
       router.push("/dashboard");
+    }
+
+    //redirect user t dashboard when refreshing the browser (coz when browser refreshed that var always == dashboard)
+    if(isActiveLink){
+      hasRedirected.current = true;
+      router.push("/"+isActiveLink);
     }
   }, [userLoading, isAuthenticated, pathname, router]);
 

@@ -26,7 +26,7 @@ export function StatisticsContainer({children,styleStatsContainer}){
     )
 }
 
-export function Statistic({children, styleStatistic, boxShadow="2px 3px 15px rgba(3, 179, 248, 0.93)"}){
+export function Statistic({children, styleStatistic, boxShadow="2px 2px 25px rgba(0, 127, 177, 0.93)"}){
 
     return(
         <div style={{...styleStatistic,boxShadow}}>
