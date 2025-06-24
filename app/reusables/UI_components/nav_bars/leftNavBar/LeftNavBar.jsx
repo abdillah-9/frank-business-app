@@ -15,8 +15,8 @@ import { IoSettingsOutline } from '@node_modules/react-icons/io5';
 import { FaPhp } from '@node_modules/react-icons/fa6';
 
 const LeftNavBar = ({isActiveLink, setActiveLink}) => {
-alert(isActiveLink)
 
+console.log(isActiveLink)
 const dispatch = useDispatch(); 
 const isVisible = useSelector((store)=>store.ReduxState.showNavBar);
 const [extraStyle,setExtraStyle] = useState({width:"15vw", position:"relative"});
