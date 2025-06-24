@@ -25,7 +25,7 @@ const windowWidth = windowSize.windowWidth;
 
 const linkClickEvent= (clickedLink)=>{
   dispatch(setReduxState({overlay:false,showNavBar:windowWidth < 1024 && false}));
-  setActiveLink(clickedLink)
+  // setActiveLink(clickedLink)
 }
 
 useEffect(() => {
@@ -70,7 +70,7 @@ useEffect(() => {
       
 
       <div 
-      //onClick={()=>setActiveLink("dashboard")} 
+      onClick={()=>setActiveLink("dashboard")} 
             style={isActiveLink == "dashboard" ? activeLink : nonActiveLink}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
@@ -82,7 +82,7 @@ useEffect(() => {
       </div>
 
       <div 
-      //onClick={()=>setActiveLink("expense")} 
+      onClick={()=>setActiveLink("expense")} 
             style={isActiveLink == "expense" ? activeLink : nonActiveLink}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
@@ -94,7 +94,7 @@ useEffect(() => {
       </div>
 
       <div 
-      //onClick={()=>setActiveLink("budget")} 
+      onClick={()=>setActiveLink("budget")} 
             style={isActiveLink == "budget" ? activeLink : nonActiveLink}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
@@ -106,7 +106,7 @@ useEffect(() => {
       </div>
 
       <div 
-      //onClick={()=>setActiveLink("user")} 
+      onClick={()=>setActiveLink("user")} 
             style={isActiveLink == "user" ? activeLink : nonActiveLink}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
@@ -118,7 +118,7 @@ useEffect(() => {
       </div>
 
       <div 
-      //onClick={()=>setActiveLink("ai")} 
+      onClick={()=>setActiveLink("ai")} 
             style={isActiveLink == "ai" ? activeLink : nonActiveLink}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
@@ -130,7 +130,7 @@ useEffect(() => {
       </div>
 
       <div 
-      //onClick={()=>setActiveLink("settings")} 
+      onClick={()=>setActiveLink("settings")} 
             style={isActiveLink == "settings" ? activeLink : nonActiveLink}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
