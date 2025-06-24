@@ -33,10 +33,10 @@ export default function UserAuth({ setActiveLink, isActiveLink }) {
     }
 
     //redirect user t dashboard when refreshing the browser (coz when browser refreshed that var always == dashboard)
-    if(isActiveLink == "dashboard"){
-      hasRedirected.current = true;
-      router.push("/"+isActiveLink);
-    }
+    // if(isActiveLink == "dashboard"){
+    //   hasRedirected.current = true;
+    //   router.push("/"+isActiveLink);
+    // }
   }, [userLoading, isAuthenticated, pathname, router]);
 
   // Optional loading state during user check
