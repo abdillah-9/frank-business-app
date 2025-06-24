@@ -38,7 +38,7 @@ export default function page() {
         queryFn: getSettingsData
     })
     const [pageNumber, setPageNumber] = useState(1);
-    const [pageRows, setPageRows] = useState(4);
+    const [pageRows, setPageRows] = useState(10);
     
     const dispatch = useDispatch();
     const formState = useSelector((store)=>store.ReduxState.showForm);
@@ -229,7 +229,7 @@ const expensContainer={
   display:"flex",
   flexDirection:"column",
   gap:"30px",
-  height:"100%",
+  height:"80vh",
 }
 
 const headingStyle={

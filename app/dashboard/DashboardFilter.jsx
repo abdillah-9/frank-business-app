@@ -38,4 +38,5 @@ const optionStyle ={
     textAlign:"center",
     fontSize:"14px",
     cursor:"pointer",
+    backgroundColor:"white",
 }

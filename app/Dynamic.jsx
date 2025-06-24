@@ -6,8 +6,8 @@ export default function DynamicPage({children}) {
   //Css
   const dynamicPage={
     width:"100%",
-    height:"90vh",
-    padding:"15px 10px",
+    height:"80vh",
+    padding:"35px 10px",
   }
 
   useEffect(()=>{

@@ -14,18 +14,18 @@ import {VscRobot} from "@node_modules/react-icons/vsc"
 import { IoSettingsOutline } from '@node_modules/react-icons/io5';
 import { FaPhp } from '@node_modules/react-icons/fa6';
 
-const LeftNavBar = ({isActiveLink, setActiveLink}) => {
+const LeftNavBar = () => {
 
 const dispatch = useDispatch(); 
 const isVisible = useSelector((store)=>store.ReduxState.showNavBar);
+const [isActiveLink, setActiveLink] = useState("dashboard");
 const [extraStyle,setExtraStyle] = useState({width:"15vw", position:"relative"});
 const {windowSize} = useWindowSize();
 
 const windowWidth = windowSize.windowWidth; 
 
-const linkClickEvent= (clickedLink)=>{
-  dispatch(setReduxState({overlay:false,showNavBar:windowWidth < 1024 && false}));
-  setActiveLink(clickedLink)
+const linkClickEvent= ()=>{
+   dispatch(setReduxState({overlay:false,showNavBar:windowWidth < 1024 && false}));
 }
 
 useEffect(() => {
@@ -37,12 +37,8 @@ useEffect(() => {
   //CSS objects
   const activeLink={
     // backgroundColor:"rgb(235,235,235)",
-    backgroundColor:"white",
-    color:"rgba(79, 8, 161, 0.76)",
+    backgroundColor:"rgb(235,235,235)",
     borderRadius:"15px 0px 0px 15px",
-  }
-  const nonActiveLink={
-    color:"white",
   }
   const navBarTempStyle = {
     display:"flex",
@@ -69,77 +65,78 @@ useEffect(() => {
       </NavBarTemp.NavContainer> 
       
 
-      <div 
-      //onClick={()=>setActiveLink("dashboard")} 
-            style={isActiveLink == "dashboard" ? activeLink : nonActiveLink}
+      <div onClick={()=>setActiveLink("dashboard")} 
+            style={isActiveLink == "dashboard" ? activeLink : {}}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><RiHome9Line/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-              <Link href="/dashboard" onClick={()=>linkClickEvent("dashboard")}>Dashboard</Link>
+              <Link href="/dashboard" onClick={linkClickEvent}>Dashboard</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
 
-      <div 
-      //onClick={()=>setActiveLink("expense")} 
-            style={isActiveLink == "expense" ? activeLink : nonActiveLink}
+      <div onClick={()=>setActiveLink("expense")} 
+            style={isActiveLink == "expense" ? activeLink : {}}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><GiMoneyStack/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-            <Link href="/expense" onClick={()=>linkClickEvent("expense")}>Expense</Link>
+            <Link href="/expense" onClick={linkClickEvent}>Expense</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
 
-      <div 
-      //onClick={()=>setActiveLink("budget")} 
-            style={isActiveLink == "budget" ? activeLink : nonActiveLink}
+      <div onClick={()=>setActiveLink("budget")} 
+            style={isActiveLink == "budget" ? activeLink : {}}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><CiMoneyBill/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-            <Link href="/budget" onClick={()=>linkClickEvent("budget")}>Budget</Link>
+            <Link href="/budget" onClick={linkClickEvent}>Budget</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
 
-      <div 
-      //onClick={()=>setActiveLink("user")} 
-            style={isActiveLink == "user" ? activeLink : nonActiveLink}
+      <div onClick={()=>setActiveLink("user")} 
+            style={isActiveLink == "user" ? activeLink : {}}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><HiOutlineUser/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-            <Link href="/user" onClick={()=>linkClickEvent("user")}>User</Link>
+            <Link href="/user" onClick={linkClickEvent}>User</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
 
-      <div 
-      //onClick={()=>setActiveLink("ai")} 
-            style={isActiveLink == "ai" ? activeLink : nonActiveLink}
+      <div onClick={()=>setActiveLink("ai")} 
+            style={isActiveLink == "ai" ? activeLink : {}}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><VscRobot/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-            <Link href="/ai" onClick={()=>linkClickEvent("ai")}>AI-insights</Link>
+            <Link href="/ai" onClick={linkClickEvent}>AI-insights</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
 
-      <div 
-      //onClick={()=>setActiveLink("settings")} 
-            style={isActiveLink == "settings" ? activeLink : nonActiveLink}
+      <div onClick={()=>setActiveLink("settings")} 
+            style={isActiveLink == "settings" ? activeLink : {}}
       >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><IoSettingsOutline/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-            <Link href="/settings" onClick={()=>linkClickEvent("settings")}>Settings</Link>
+            <Link href="/settings" onClick={linkClickEvent}>Settings</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
+
+      <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
+        <NavBarTemp.NavIcon navIconStyle={navIconStyle}><FaPhp/></NavBarTemp.NavIcon>
+          <NavBarTemp.NavText navTextStyle={navTextStyle}>
+            <Link href="/apiPHP" onClick={linkClickEvent}>testingPHPAPI</Link>
+          </NavBarTemp.NavText>        
+      </NavBarTemp.NavContainer>
 
     </NavBarTemp> :""
   )
@@ -163,14 +160,14 @@ const navContainerStyle ={
 }
 
 const navTextStyle_Logo ={
-  color:"white",
+  color:"rgba(79, 8, 161, 0.76)",
   textAlign:"center",
   fontWeight:500,
   fontSize:"12px",
 }
 
 const navTextStyle ={
-  //color:"white",
+  color:"rgb(8, 8, 8)",
   textAlign:"center",
   fontSize:"12px",
 }
@@ -184,7 +181,7 @@ const imageAttributes ={
 
 const navIconStyle ={
   fontSize:"18px",
-  //color:"white",
+  color:"rgba(79, 8, 161, 0.76)",
 }
 
 export default LeftNavBar;

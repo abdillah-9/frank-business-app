@@ -36,7 +36,7 @@ export default function page() {
       budgetData:[],
     })  
     const [pageNumber, setPageNumber] = useState(1);
-    const [pageRows, setPageRows] = useState(4);
+    const [pageRows, setPageRows] = useState(10);
   
   const {isLoading: budgetLoading, data: budget, error} =  useQuery({
     queryKey: ['budgetData'],
@@ -269,7 +269,7 @@ const expensContainer={
   display:"flex",
   flexDirection:"column",
   gap:"30px",
-  height:"100%",
+  height:"80vh",
 }
 
 const headingStyle={

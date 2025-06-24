@@ -196,38 +196,6 @@ export default function Form(
       </FormContainer.Row>
 
       <FormContainer.Row formRow={formRow}>
-        <FormContainer.Label labelStyle={labelStyle}> amount </FormContainer.Label>
-        <FormContainer.Number 
-          inputStyle={inputStyle} 
-          fieldName={"amount"} 
-          number={amount} 
-          validation={validateAmount} 
-          onInput={handleAmount}/>
-      </FormContainer.Row>
-
-      <FormContainer.Row formRow={formRow}>
-        <FormContainer.Label labelStyle={labelStyle}> date </FormContainer.Label>
-        <FormContainer.Date inputStyle={inputStyle} fieldName={"date"}  date={today}  
-          validation={validatedate}/>
-      </FormContainer.Row>
-
-      <FormContainer.Row formRow={formRow}>
-        <FormContainer.Label labelStyle={labelStyle}>status</FormContainer.Label>
-        <FormContainer.Select inputStyle={inputStyle} fieldName={"status"}> 
-          <FormContainer.Option optionValue={"confirmed"}>confirmed</FormContainer.Option>
-          <FormContainer.Option optionValue={"unConfirmed"}>un-confirmed</FormContainer.Option>
-        </FormContainer.Select>
-      </FormContainer.Row>
-
-      {/* <FormContainer.Row formRow={formRow}>
-        <FormContainer.Label labelStyle={labelStyle}>budget name</FormContainer.Label>
-        <FormContainer.Select inputStyle={inputStyle} fieldName={"budgetID"} 
-        selected={budgetID} validation={validateBudget}> 
-          <FormContainer.Option optionValue={""}></FormContainer.Option>
-        </FormContainer.Select>
-      </FormContainer.Row> */}
-
-      <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}>budget name</FormContainer.Label>
         <FormContainer.Select inputStyle={inputStyle} fieldName={"budgetID"} 
         selected={budgetID} validation={validateBudget}
@@ -262,6 +230,38 @@ export default function Form(
             }
         </FormContainer.Select>
       </FormContainer.Row>
+      
+      <FormContainer.Row formRow={formRow}>
+        <FormContainer.Label labelStyle={labelStyle}> amount </FormContainer.Label>
+        <FormContainer.Number 
+          inputStyle={inputStyle} 
+          fieldName={"amount"} 
+          number={amount} 
+          validation={validateAmount} 
+          onInput={handleAmount}/>
+      </FormContainer.Row>
+
+      <FormContainer.Row formRow={formRow}>
+        <FormContainer.Label labelStyle={labelStyle}> date </FormContainer.Label>
+        <FormContainer.Date inputStyle={inputStyle} fieldName={"date"}  date={today}  
+          validation={validatedate}/>
+      </FormContainer.Row>
+
+      <FormContainer.Row formRow={formRow}>
+        <FormContainer.Label labelStyle={labelStyle}>status</FormContainer.Label>
+        <FormContainer.Select inputStyle={inputStyle} fieldName={"status"}> 
+          <FormContainer.Option optionValue={"confirmed"}>confirmed</FormContainer.Option>
+          <FormContainer.Option optionValue={"unConfirmed"}>un-confirmed</FormContainer.Option>
+        </FormContainer.Select>
+      </FormContainer.Row>
+
+      {/* <FormContainer.Row formRow={formRow}>
+        <FormContainer.Label labelStyle={labelStyle}>budget name</FormContainer.Label>
+        <FormContainer.Select inputStyle={inputStyle} fieldName={"budgetID"} 
+        selected={budgetID} validation={validateBudget}> 
+          <FormContainer.Option optionValue={""}></FormContainer.Option>
+        </FormContainer.Select>
+      </FormContainer.Row> */}
 
       <FormContainer.Row formRow={{...formRow, height:"fit-content"}}>
         <FormContainer.Label labelStyle={labelStyle}>Photo </FormContainer.Label>

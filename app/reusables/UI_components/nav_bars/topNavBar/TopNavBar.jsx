@@ -9,7 +9,7 @@ import useUser from '@app/authentication/hooks/useUser';
 import useLogOut from '@app/authentication/hooks/useLogOut';
 import toast from '@node_modules/react-hot-toast/dist';
 
-export default function TopNavBar() {
+export default function TopNavBar({isActiveLink, setActiveLink}) {
 
   let id="";let email="";let avatar="";let fullName="";
   
@@ -37,7 +37,13 @@ export default function TopNavBar() {
   const {logOut} = useLogOut();
 
   return (
-    <div>
+    <div style={{display:"flex", justifyContent:"center", alignItems:"center", 
+     borderBottom:"2px solid rgba(79, 8, 161, 0.36)",paddingTop:"10px"}}>
+      <div style={{textTransform:"capitalize", fontWeight:500, fontSize:"20px"}}>
+        {
+          isActiveLink == "dashboard" ? isActiveLink : ""
+        }
+      </div>
       <NavBarTemp navBarTempStyle={navBarTempStyle}>
 
         <NavBarTemp.NavContainer navContainerStyle={activeUser}>

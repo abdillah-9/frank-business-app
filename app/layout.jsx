@@ -1,12 +1,9 @@
 import '@styles/globals.css';
 import ReduxProvider from './provider/redux/ReduxProvider';
-import LeftNavBar from './reusables/UI_components/nav_bars/leftNavBar/LeftNavBar';
-import TopNavBar from './reusables/UI_components/nav_bars/topNavBar/TopNavBar';
 import { Toaster } from '@node_modules/react-hot-toast';
 import Overlay from './reusables/UI_components/Overlay/Overlay';
-import DynamicPage from './Dynamic';
 import ReactQueryProvider from './provider/reactQuery/ReactQueryProvider';
-import UserAuth from './authentication/UserAuth';
+import UserInterface from './UserInterface';
 
 const RootLayout = ({children}) => {
 
@@ -15,12 +12,7 @@ const RootLayout = ({children}) => {
     <ReduxProvider>
       <html lang='en' style={universalStyle}>
         <body style={container}>
-        <UserAuth/>
-          <div style={rightSide}>
-            <TopNavBar/>
-            <DynamicPage>{children}</DynamicPage>
-          </div>
-          <LeftNavBar/>
+        <UserInterface children={children}/>
           <Overlay/>
           <Toaster 
               position="top-right"
@@ -66,12 +58,6 @@ const container={
   flexDirection:"row-reverse",
   padding:0,
   margin:0,
-}
-
-const rightSide={
-  width:"100%",
-  padding:"0px 0px 0px 4px",
-  backgroundColor:"rgb(235,235,235)",
 }
 
 export default RootLayout

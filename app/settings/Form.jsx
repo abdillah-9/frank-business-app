@@ -65,6 +65,7 @@ export default function Form({budget, insertDataMutation, updateDataMutation, us
     overflow:"auto",
     transition: "left 0.5s ease",
     zIndex:2,
+    boxShadow:"2px 2px 20px black"
   }
 
   const formRow={
@@ -87,7 +88,7 @@ export default function Form({budget, insertDataMutation, updateDataMutation, us
           <HiXCircle/>
         </FormContainer.Icon>
               <FormContainer.Row formRow={formRow}>
-        <FormContainer.Label labelStyle={labelStyle}> budget_categories </FormContainer.Label>
+        <FormContainer.Label labelStyle={labelStyle}> New category </FormContainer.Label>
 
         <FormContainer.Text inputStyle={inputStyle} fieldName={"budget_categories"} 
           text={budget_categories}  

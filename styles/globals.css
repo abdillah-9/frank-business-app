@@ -203,11 +203,11 @@
 
 /* Scroll bar For any other browser*/
 *::-webkit-scrollbar{
-  width: 8px;
+  width: 6px;
 }
 *::-webkit-scrollbar-thumb{
   border-radius: 10px;
-  background-color:  rgba(230,230,230);
+  background-color:  rgb(29, 27, 27);
 }
 *::-webkit-scrollbar-track{
   background-color:  rgba(230,230,230);

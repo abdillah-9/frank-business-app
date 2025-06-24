@@ -311,41 +311,46 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
         {/*********** STATISTICS CONTAINER FOR STATS ****************/}
         <StatisticsContainer styleStatsContainer={styleStatsContainer}>
 
-          <Statistic styleStatistic={styleStatistic} boxShadow='2px 3px 15px rgb(252, 84, 84)'>
+          <Statistic styleStatistic={styleStatistic} boxShadow='2px 2px 25px rgb(187, 33, 33)'>
             <StatisticIcon styleStatIcon={styleStatIcon}backGrColor={"rgb(252, 84, 84)"}> 
               <GiTakeMyMoney />
             </StatisticIcon>
             <StatisticDesc styleStatDesc={styleStatDesc}>
               <div style={styleName}>Total active budgets</div>
               <div style={styleValue}>
-                {stats.budgetIsLoading ? <LoadingSpinner /> : stats.totalActiveBudget}
-                <span style={{ fontSize: "16px" }}> TSh</span>
+                {stats.budgetIsLoading ? <LoadingSpinner /> : new Intl.NumberFormat().format(stats.totalActiveBudget)}
+                <span style={{ fontSize: "15px" }}> TSh</span>
               </div>
             </StatisticDesc>
           </Statistic>
 
-          <Statistic styleStatistic={styleStatistic} boxShadow="2px 3px 15px rgb(241, 187, 7)">
+          <Statistic styleStatistic={styleStatistic} boxShadow="2px 2px 25px rgb(185, 143, 6)">
             <StatisticIcon styleStatIcon={styleStatIcon} backGrColor={"rgb(241, 187, 7)"}> 
               <GiPayMoney/>
             </StatisticIcon>
             <StatisticDesc styleStatDesc={styleStatDesc}>
               <div style={styleName}>Total confirmed expenses</div>
               <div style={styleValue}>
-                {stats.expenseIsLoading ? <LoadingSpinner /> : stats.totalConfirmedExpenses}
-               <span style={{ fontSize: "16px" }}> TSh</span>
+                { 
+                  stats.expenseIsLoading ? <LoadingSpinner /> : 
+                  new Intl.NumberFormat().format(stats.totalConfirmedExpenses)
+                }
+               <span style={{ fontSize: "15px" }}> TSh</span>
               </div>
             </StatisticDesc>
           </Statistic>
 
-          <Statistic styleStatistic={styleStatistic} boxShadow='2px 3px 15px rgb(83,211,162)'>
+          <Statistic styleStatistic={styleStatistic} boxShadow='2px 2px 25px rgb(34, 143, 101)'>
             <StatisticIcon styleStatIcon={styleStatIcon} backGrColor={"rgb(83, 211, 162)"}> 
               <BsMenuButtonWideFill/>
             </StatisticIcon>
             <StatisticDesc styleStatDesc={styleStatDesc}>
               <div style={styleName}>Active budgets</div>
               <div style={styleValue}>
-                {stats.budgetIsLoading ? <LoadingSpinner /> :
-                 stats.totalBudgetsExceeded+stats.totalBudgetsNotExceeded}
+                {
+                  stats.budgetIsLoading ? <LoadingSpinner /> :
+                  Intl.NumberFormat().format(stats.totalBudgetsExceeded+stats.totalBudgetsNotExceeded) 
+                }
               </div>
             </StatisticDesc>
           </Statistic>
@@ -357,7 +362,10 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
             <StatisticDesc styleStatDesc={styleStatDesc}>
               <div style={styleName}>Exceeded budgets</div>
               <div style={styleValue}>
-                {stats.budgetIsLoading ? <LoadingSpinner /> : stats.totalBudgetsExceeded}
+                {
+                  stats.budgetIsLoading ? <LoadingSpinner /> : 
+                  Intl.NumberFormat().format(stats.totalBudgetsExceeded) 
+                }
               </div>
             </StatisticDesc>
           </Statistic>
@@ -371,7 +379,7 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
           {
             pieChartData !="" && pieChartData != undefined ?
           <div style={pieChartStyle}>   
-          <ResponsiveContainer width={"100%"} height={240}>
+          <ResponsiveContainer width={"100%"} height={240} >
             <PieChart>
               <Pie  
                 data={pieChartData} 
@@ -447,7 +455,7 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
 
           {
           (stats.expenseIsLoading || stats.budgetIsLoading) ? <LoadingSpinner/> :
-          <ResponsiveContainer height={300} width={"90%"}>  
+          <ResponsiveContainer height={300} width={"90%"} >  
           <AreaChart data={areaChartData} style={styleAreaChart}>
             <XAxis dataKey="date" style={styleXaxis}/>
             <YAxis unit={"Tsh"} style={styleYaxis}/>
@@ -513,13 +521,16 @@ export default function ManagerDashbord({user, statsDuration, setStatsDuration})
 const styleDashboard={
   backgroundColor:"rgba(252, 254, 255, 0.9)",
   //backgroundColor:"rgb(235,235,235)",
-  height:"77vh",
-  overflowY:"auto",
+  borderRadius:"0px",
+  height:"70vh",
+  overflowX:"auto",
   padding:"20px 0px",
-  boxShadow:"2px 2px 10px rgba(20,20,20,0.3)",
+  // boxShadow:"2px 2px 5px rgb(97, 4, 85)",
+
 }
 
 const styleStatsContainer={
+  borderRadius:"5px",
   display:"flex",
   flexDirection:"row",
   flexWrap:"wrap",
@@ -531,25 +542,28 @@ const styleStatsContainer={
 }
 const pieChartStyle={
   //backgroundColor:"rgb(235,235,235)",
-  boxShadow:"2px 2px 20px rgba(20,20,20,0.5)",
+  boxShadow:"2px 2px 20px rgba(20,20,20,1)",
   minWidth:"350px",
   width:"35%",
   display:"flex",
   flexDirection:"column",
-  padding:"20px 10px"
+  padding:"20px 10px",
+  borderRadius:"5px",
 }
 const barChartStyle={
   //backgroundColor:"rgb(235,235,235)",
-  boxShadow:"2px 2px 20px rgba(20,20,20,0.5)",
+  boxShadow:"2px 2px 20px rgba(20,20,20,1)",
   minWidth:"350px",
   width:"60%",
   display:"flex",
   flexDirection:"column",
-  padding:"20px 10px"
+  padding:"20px 10px",
+  borderRadius:"5px",
 }
 const barChartDesc={
   //backgroundColor:"rgb(235,235,235)",
-  boxShadow:"2px 2px 20px rgba(20,20,20,0.5)",
+  boxShadow:"2px 2px 20px rgba(20,20,20,1)",
+  borderRadius:"5px",
   fontWeight:500,
   gap:"20px",
   minWidth:"350px",
@@ -576,7 +590,7 @@ const barTotalExpense={
   padding:"15px",
 }
 const pieChartDescStyle={
-  boxShadow:"2px 2px 20px rgba(20,20,20,0.5)",
+  boxShadow:"2px 2px 20px rgba(20,20,20,1)",
   minWidth:"350px",
   width:"60%",
   display:"flex",
@@ -584,6 +598,7 @@ const pieChartDescStyle={
   height:"240px",
   padding:"20px 10px",
   gap:"20px",
+  borderRadius:"5px",
 }
 const pieChartDescStatsStyle={
   display:"flex",
@@ -597,6 +612,8 @@ const pieStatsStyle={
 }
 
 const styleStatistic={
+  borderRadius:"5px",
+  minHeight:"90px",
   display:"flex",
   flexDirection:"row",
   alignItems:"space-evenly",
@@ -609,6 +626,7 @@ const styleStatistic={
 }
 
 const styleStatisticGraph={
+  borderRadius:"5px",
   display:"flex",
   flexDirection:"column",
   alignItems:"center",
@@ -648,8 +666,8 @@ const styleName ={
 }
 
 const styleValue ={
-  fontSize:"20px",
-  fontWeight:"400",
+  fontSize:"16px",
+  fontWeight:500,
 }
 
 const styleAreaChart ={

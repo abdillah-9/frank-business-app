@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import { TiWarningOutline } from '@node_modules/react-icons/ti';
 import {TbRobotOff} from "react-icons/tb"
 import Details from './details';
+import { PiEmptyDuotone } from '@node_modules/react-icons/pi';
 
 export default function Insights({data, stats}) {
     const [insights, setInsights] = useState(data);
@@ -65,8 +66,8 @@ export default function Insights({data, stats}) {
             )
                 :  <div style={{display:"flex", gap:"10px", alignItems:"center",
                  justifyContent:"center",width:"100%",height:"100%"}}>
-                    <span>No data was found</span> 
-                    <Icon iconStyle={iconStyle}><MdOutlineSignalWifiStatusbarConnectedNoInternet4 /></Icon>
+                    <span>No insight to show</span> 
+                    <Icon iconStyle={iconStyle}><PiEmptyDuotone/></Icon>
                    </div>
             }
         </div>
@@ -76,12 +77,13 @@ export default function Insights({data, stats}) {
 
 //CSS
 const main ={
-    backgroundColor:"rgba(255, 255, 255, 0.5)",
+    borderRadius:"5px",
+    backgroundColor:"rgba(79, 8, 161, 0.08)",
     padding:"20px",
     display:"flex",
     flexDirection:"column",
     gap:"15px",
-    height:"470px",
+    height:"83vh",
     overflow:"auto",
 }
 const header={
@@ -96,6 +98,8 @@ const cardsBody={
     gap:"20px",
 }
 const cards={
+    borderRadius:"5px",
+    boxShadow:"2px 2px 20px rgb(10,10,10)",
     backgroundColor:"white",
     display:"flex",
     gap:"20px",

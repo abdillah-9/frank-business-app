@@ -59,7 +59,7 @@ export default function Settings() {
     //CSS
     const createButton={
         width:"80%",
-        backgroundColor:"rgba(240, 83, 22, 0.76)",
+        backgroundColor:"rgba(79, 8, 161, 0.76)",
         boxShadow:"1px 2px 15px rgb(0, 0, 0)",
         padding:"8px",
         color:"white",
@@ -78,7 +78,7 @@ export default function Settings() {
         fontSize:"17px",
         width:"100%",
         fontWeight:500,
-        color:"rgba(207, 205, 207, 0.86)",
+        color:"rgb(63, 55, 63)",
         textTransform:"uppercase",
         textAlign:"center",
     }
@@ -86,31 +86,30 @@ export default function Settings() {
         display:"flex",
         flexDirection:"column",
         alignItems:"center",
+        justifyContent:"space-between",
         gap:"17px",
-        borderRadius:"5px",
-        minHeight:"83vh",
-        backgroundColor:"rgba(79, 8, 161, 0.64)",
-        color:"rgb(247, 241, 245)",
+        borderRadius:"0px",
+        minHeight:"80vh",
+        borderLeft:"3px solid rgba(79, 8, 161, 0.64)",
+        borderRight:"3px solid rgba(79, 8, 161, 0.64)",
+        color:"rgba(79, 8, 161, 0.76)",
         fontSize:"15px",
-        fontWeight:200,
+        fontWeight:500,
         padding:"10px 5px",
         textTransform:"capitalize",
-        boxShadow:"2px 1px 15px rgba(15, 0, 32, 0.76)",
     }
 
     const cats={
-        boxShadow:"2px 2px 10px rgb(0, 0, 0)",
-        padding:"10px 15px",
-        borderRadius:"5px",
-        //color:"rgba(240, 83, 22, 0.76)",
-        //backgroundColor:"rgba(220,220,220,1)",
+        padding:"0px 5px",
+        borderLeft:"1px solid rgba(79, 8, 161, 0.76)",
     }
   return (
     <div>
         <Form budget={budget} user={user} insertDataMutation={insertDataMutation}
         updateDataMutation={updateDataMutation}/>
         <div style={budget_categories}>
-            <div style={heading}>budgets categories</div>
+            <div style={{display:"flex", flexDirection:"column", gap:"20px"}}>
+                <div style={heading}>budgets categories</div>
                 <div style={{ display:"flex",flexWrap:"wrap", gap:"20px", justifyContent:"center" }}>
                 {
                     settings ? settings.filter((row)=>row.userID == user.id)
@@ -121,8 +120,9 @@ export default function Settings() {
                     ) : "No data has been found..."
                 }
                 </div>
+            </div>
             <Button buttonStyle={createButton} actionHandler={showFormHandler}>
-                <Icon><BiAddToQueue /></Icon>Add category
+                <Icon><BiAddToQueue /></Icon>Add new category
             </Button>                    
         </div>   
     </div>

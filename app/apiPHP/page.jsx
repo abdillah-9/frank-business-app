@@ -1,95 +1,99 @@
-"use client"
+'use client';
 import { useState } from 'react';
 
 export default function Home() {
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [response, setResponse] = useState(null);
 
-/* ********************** OPTION 1-WITHOUT GRAPHQL *********************** */
-//   const handleSubmit = async (e) => {
-//     e.preventDefault(); // Stop page reload
-
-//     try {
-//       const res = await fetch('http://localhost:7000/api.php', {
-//         method: 'POST',
-//         headers: {
-//           'Content-type': 'application/json', // Sending JSON
-//         },
-//         body: JSON.stringify({ name }), // Send name to PHP
-//       });
-
-//       const data = await res.json(); // Wait for JSON back
-//       setResponse(data.message); // Set message from PHP
-//     } catch (error) {
-//       console.error('Error:', error);
-//       setResponse('Something went wrong');
-//     }
-//   };
-
-/* ********************** OPTION 2-WITHOUT GRAPHQL *********************** */
-    // function handleSubmit(e) {
-    // e.preventDefault(); // Don't reload the page
-
-    // fetch("http://localhost:7000/api.php", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ name }),
-    // })
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //     console.log("Response from PHP:", data);
-    //     setResponse(data.message); // You still need this in React to update the UI
-    //     })
-    //     .catch((err) => {
-    //     console.error("Error:", err);
-    //     setResponse("Something went wrong");
-    //     });
-    // }
-
-/* ********************** OPTION 3-WITH GRAPHQL *********************** */
-    function handleSubmit(e) {
-    e.preventDefault();
-
-    const query = `
-        query SayHello($name: String) {
-        hello(name: $name)
+  // 🟢 GraphQL Mutation
+  const createUser = async () => {
+    const mutation = `
+      mutation CreateUser($name: String!, $email: String!) {
+        createUser(name: $name, email: $email) {
+          id
+          name
+          email
         }
+      }
     `;
 
-    fetch("http://localhost:7000/graphql.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-        query,
-        variables: { name },
-        }),
-    })
-        .then((res) => res.json())
-        .then((data) => {
-        console.log("GraphQL response:", data);
-        setResponse(data.data.hello);
-        })
-        .catch((err) => {
-        console.error("Error:", err);
-        setResponse("Something went wrong");
-        });
+    try {
+      const res = await fetch('http://localhost/myAPIs/testingApp/graphql.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: mutation, variables: { name, email } }),
+      });
+      const data = await res.json();
+      setResponse(data.data.createUser);
+    } catch (error) {
+      setResponse({ error: error.message });
     }
+  };
 
+  // 🔵 GraphQL Query with improved error handling
+  const sayBye = async () => {
+    const query = `
+      query SayHello($name: String) {
+        bye(name: $name)
+      }
+    `;
+
+    try {
+      const res = await fetch('http://localhost/myAPIs/testingApp/graphql.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables: { name } }),
+      });
+
+      const data = await res.json();
+      console.log("GraphQL sayBye response:", data);
+
+      if (data.errors) {
+        setResponse({ error: data.errors[0].message });
+      } else if (data.data && data.data.bye) {
+        setResponse(data.data.bye);
+      } else {
+        setResponse({ error: "No data received from server" });
+      }
+    } catch (error) {
+      setResponse({ error: error.message });
+    }
+  };
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>PHP API with Fetch in React</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter your name"
-        />
-        <button type="submit">Send to PHP</button>
-      </form>
+      <h1>GraphQL Demo (PHP + Supabase)</h1>
 
-      {response && <p>Response: {response}</p>}
+      <input
+        type="text"
+        value={name}
+        placeholder="Enter name"
+        onChange={(e) => setName(e.target.value)}
+      />
+
+      <input
+        type="email"
+        value={email}
+        placeholder="Enter email"
+        onChange={(e) => setEmail(e.target.value)}
+      />
+
+      <div style={{ marginTop: 10 }}>
+        <button onClick={createUser}>Create User (Mutation)</button>
+        <button onClick={sayBye}>Say Bye (Query)</button>
+      </div>
+
+      {response && (
+        <div style={{ marginTop: 20 }}>
+          <h3>Response:</h3>
+          <pre>
+            {typeof response === 'string'
+              ? response
+              : JSON.stringify(response, null, 2)}
+          </pre>
+        </div>
+      )}
     </div>
   );
 }

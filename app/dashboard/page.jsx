@@ -17,7 +17,7 @@ const Page = () => {
   return (
     <>
     <div style={headerContainer}>
-       <div style={header}>Dashboard</div>
+       <div style={header}></div>
        <DashboardFilter setStatsDuration={setStatsDuration} statsDuration={statsDuration} /> 
     </div>          
     <ManagerDashbord user={user} setStatsDuration={setStatsDuration} statsDuration={statsDuration}/>
@@ -35,7 +35,7 @@ const headerContainer={
   justifyContent:"space-between",
   justifySelf:"center",
   width:"100%",
-  padding:"13px 0px",
+  padding:"0px 0px 25px 0px",
   //border:"1px solid red",
 }
 const header={
