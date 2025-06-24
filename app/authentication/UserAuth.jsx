@@ -33,7 +33,7 @@ export default function UserAuth({ setActiveLink, isActiveLink }) {
     }
 
     //redirect user t dashboard when refreshing the browser (coz when browser refreshed that var always == dashboard)
-    if(isActiveLink){
+    if(isActiveLink == "dashboard"){
       hasRedirected.current = true;
       router.push("/"+isActiveLink);
     }
