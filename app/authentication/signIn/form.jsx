@@ -6,6 +6,9 @@ import Image from 'next/image';
 import { useLogin } from '../hooks/useLogin';
 import toast from '@node_modules/react-hot-toast/dist';
 import Link from '@node_modules/next/link';
+import Icon from '@app/reusables/UI_components/Icon';
+import { MdMarkEmailRead } from '@node_modules/react-icons/md';
+import { TbLockPassword, TbMailCheck } from '@node_modules/react-icons/tb';
 
 export default function Form() {
     let email=""; let password = "";
@@ -32,8 +35,11 @@ export default function Form() {
 
   return (
 
-    <FormContainer formContainer={formContainer} formSubmit={formSubmit} onError={onError}>   
-    <div style={mainContainer}> 
+    <FormContainer formContainer={formContainer} formSubmit={formSubmit} onError={onError}>  
+    <div style={{height:"100vh", width:"100vw",position:"fixed",top:0,left:0}}
+     className='backgroundAnime'>
+    </div> 
+    <div style={mainContainer} > 
       <div style={headerCard}>
         <Logo>
             <Image src="/assets/images/logo.svg" alt="logo" width={80} height={80}/>
@@ -44,20 +50,24 @@ export default function Form() {
       </div> 
         <FormContainer.Body formBody={formBody}>
             <FormContainer.Row formRow={formRow}>
-                <FormContainer.Label labelStyle={labelStyle}>Email address</FormContainer.Label>
+                <FormContainer.Label labelStyle={labelStyle}>
+                  <Icon iconStyle={iconStyle}><TbMailCheck/></Icon>Email address
+                </FormContainer.Label>
                 <FormContainer.Text fieldName='email'  type={"email"} validation={validateMail}
                 inputStyle={inputStyle} text={email} />
             </FormContainer.Row>
 
             <FormContainer.Row formRow={formRow}>
-                <FormContainer.Label>Password</FormContainer.Label>
+                <FormContainer.Label labelStyle={labelStyle}>
+                  <Icon iconStyle={iconStyle}><TbLockPassword/></Icon>Password
+                </FormContainer.Label>
                 <FormContainer.Text fieldName='password'  type={"password"} validation={validatePword}
                 inputStyle={inputStyle} text={password} />
             </FormContainer.Row>
 
             <FormContainer.SubmitRow submitRow={submitRow}>
                 <FormContainer.Submit submitButton={submitButton}>
-                    SignIn
+                    Sign In
                 </FormContainer.Submit>
             </FormContainer.SubmitRow>
             <div style={signUpContainer}>
@@ -71,6 +81,11 @@ export default function Form() {
 }
 
 // ********************* COMPONENTS CSS STYLING ****************************//
+const iconStyle={
+  padding:"0px 5px",
+  fontSize:"20px",
+  color:"rgba(79, 8, 161, 0.76)",
+}
 const formContainer ={
     display:"flex",
     alignItems:"center",
@@ -84,7 +99,7 @@ const formContainer ={
     zIndex:3,
 }
 const mainContainer={
-    boxShadow:" 5px 5px 30px rgba(2, 10, 56, 0.92)",
+    boxShadow:" 1px 10px 50px rgb(59, 2, 59)",
     backgroundColor:"white",
     display:"flex",
     flexWrap:"wrap",
@@ -92,6 +107,7 @@ const mainContainer={
     width:"50vw",
     minWidth:"230px",
     maxWidth:"600px",
+    zIndex:2
 }
 const formBody ={
     backgroundColor: "white",
@@ -141,7 +157,9 @@ const formRow={
     maxWidth:"230px",
   }
   const labelStyle={
-    width: "100px",
+    display:"flex",
+    flexWrap:"wrap",
+    //width: "100px",
     padding: "2px 0px",
     color: "rgb(10, 10, 24)",
   }
