@@ -13,10 +13,14 @@ import { BsRobot } from '@node_modules/react-icons/bs';
 import {VscRobot} from "@node_modules/react-icons/vsc"
 import { IoSettingsOutline } from '@node_modules/react-icons/io5';
 import { FaPhp } from '@node_modules/react-icons/fa6';
+import { usePathname } from 'next/navigation';
 
-const LeftNavBar = ({isActiveLink, setActiveLink}) => {
+const LeftNavBar = () => {
 
-console.log(isActiveLink)
+//get current path
+let currentPath = usePathname();
+
+console.log(currentPath)
 const dispatch = useDispatch(); 
 const isVisible = useSelector((store)=>store.ReduxState.showNavBar);
 const [extraStyle,setExtraStyle] = useState({width:"15vw", position:"relative"});
@@ -26,7 +30,6 @@ const windowWidth = windowSize.windowWidth;
 
 const linkClickEvent= (clickedLink)=>{
   dispatch(setReduxState({overlay:false,showNavBar:windowWidth < 1024 && false}));
-  setActiveLink(clickedLink)
 }
 
 useEffect(() => {
@@ -70,7 +73,7 @@ useEffect(() => {
       </NavBarTemp.NavContainer> 
       
 
-      <div style={isActiveLink == "dashboard" ? activeLink : nonActiveLink}>
+      <div style={currentPath.startsWith("/dashboard") ? activeLink : nonActiveLink}>
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><RiHome9Line/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
@@ -81,7 +84,7 @@ useEffect(() => {
       </NavBarTemp.NavContainer>
       </div>
 
-      <div style={isActiveLink == "expense" ? activeLink : nonActiveLink}>
+      <div style={currentPath.startsWith("/expense") ? activeLink : nonActiveLink}>
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><GiMoneyStack/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
@@ -92,7 +95,7 @@ useEffect(() => {
       </NavBarTemp.NavContainer>
       </div>
 
-      <div style={isActiveLink == "budget" ? activeLink : nonActiveLink}>
+      <div style={currentPath.startsWith("/budget") ? activeLink : nonActiveLink}>
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><CiMoneyBill/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
@@ -103,7 +106,7 @@ useEffect(() => {
       </NavBarTemp.NavContainer>
       </div>
 
-      <div style={isActiveLink == "user" ? activeLink : nonActiveLink}>
+      <div style={currentPath.startsWith("/user") ? activeLink : nonActiveLink}>
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><HiOutlineUser/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
@@ -114,7 +117,7 @@ useEffect(() => {
       </NavBarTemp.NavContainer>
       </div>
 
-      <div style={isActiveLink == "ai" ? activeLink : nonActiveLink}>
+      <div style={currentPath.startsWith("/ai") ? activeLink : nonActiveLink}>
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><VscRobot/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
@@ -125,7 +128,7 @@ useEffect(() => {
       </NavBarTemp.NavContainer>
       </div>
 
-      <div style={isActiveLink == "settings" ? activeLink : nonActiveLink}>
+      <div style={currentPath.startsWith("/settings") ? activeLink : nonActiveLink}>
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><IoSettingsOutline/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
