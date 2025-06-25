@@ -7,6 +7,47 @@
 /* 
   Note: The styles for this gradient grid background is heavily inspired by the creator of this amazing site (https://dub.sh) – all credits go to them! 
 */
+.backgroundAnime {
+  animation: backgroundColours 10s infinite ease-in-out;
+}
+@keyframes backgroundColours{
+  0%{
+    background-image: linear-gradient(
+      130deg,
+      rgba(121, 2, 111, 0.836) 5%,
+      rgb(255, 102, 0) 30%,
+      rgb(255, 102, 0) 70%,
+      rgba(121, 2, 111, 0.836) 100%
+    );
+  }
+  30%{
+    background-image: linear-gradient(
+      130deg,
+      rgba(121, 2, 111, 0.836) 5%,
+      rgb(255, 102, 0) 30%,
+      rgb(255, 102, 0) 70%,
+      rgba(121, 2, 111, 0.836) 100%
+    );
+  }
+  70%{
+    background-image: linear-gradient(
+      130deg,
+      rgba(121, 2, 111, 0.836) 5%,
+      rgb(255, 102, 0) 30%,
+      rgb(255, 102, 0) 70%,
+      rgba(121, 2, 111, 0.836) 100%
+    );
+  }
+  100%{
+    background-image: linear-gradient(
+      130deg,
+      rgba(121, 2, 111, 0.836) 5%,
+      rgb(255, 102, 0) 30%,
+      rgb(255, 102, 0) 70%,
+      rgba(121, 2, 111, 0.836) 100%
+    );
+  }
+}
 .warningAnime{
   animation: warningAlpha 1s infinite;
 }
@@ -249,7 +290,7 @@
   @apply flex justify-between items-center;
 }
 *{
-  box-sizing: border-box;
+  box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* header text */

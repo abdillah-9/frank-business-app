@@ -8,6 +8,8 @@ import {IoImageOutline} from "react-icons/io5";
 import Icon from '@app/reusables/UI_components/Icon';
 import useSignUp from '../hooks/useSignUp';
 import { useRouter } from '@node_modules/next/navigation';
+import Link from '@node_modules/next/link';
+import { TbLockPassword, TbMailCheck, TbUserPlus } from '@node_modules/react-icons/tb';
 
 export default function Form() {
   //input fields of the user form fields
@@ -41,7 +43,10 @@ export default function Form() {
       // End 
   return (
 
-    <FormContainer formSubmit={formSubmit} onError={onError} formContainer={formContainer}>   
+    <FormContainer formSubmit={formSubmit} onError={onError} formContainer={formContainer}> 
+    <div style={{height:"100vh", width:"100vw",position:"fixed",top:0,left:0}}
+     className='backgroundAnime'>
+    </div>   
     <div style={mainContainer}> 
       <div style={headerCard}>
         <Logo>
@@ -53,20 +58,26 @@ export default function Form() {
       </div> 
         <FormContainer.Body formBody={formBody}>
             <FormContainer.Row formRow={formRow}>
-                <FormContainer.Label labelStyle={labelStyle}>Full name</FormContainer.Label>
+                <FormContainer.Label labelStyle={labelStyle}>
+                  <Icon iconStyle={iconStyle}><TbUserPlus/></Icon>Full name
+                </FormContainer.Label>
                 <FormContainer.Text fieldName='fullName'  type={"text"} validation={validateFullname}
                 text={fullName} inputStyle={inputStyle} />
             </FormContainer.Row>
 
             <FormContainer.Row formRow={formRow}>
-                <FormContainer.Label labelStyle={labelStyle}>Password</FormContainer.Label>
+                <FormContainer.Label labelStyle={labelStyle}>
+                  <Icon iconStyle={iconStyle}><TbLockPassword/></Icon>Password
+                </FormContainer.Label>
                 <FormContainer.Text fieldName='password'  type={"password"} validation={validatePword}
                 text={password} inputStyle={inputStyle} />
             </FormContainer.Row>
 
 
             <FormContainer.Row formRow={formRow}>
-                <FormContainer.Label labelStyle={labelStyle}>Email address</FormContainer.Label>
+                <FormContainer.Label labelStyle={labelStyle}>
+                  <Icon iconStyle={iconStyle}><TbMailCheck/></Icon>Email address
+                </FormContainer.Label>
                 <FormContainer.Text fieldName='email'  type={"email"} validation={validateEmail}
                 text={email} inputStyle={inputStyle} />
             </FormContainer.Row>
@@ -80,9 +91,13 @@ export default function Form() {
 
             <FormContainer.SubmitRow submitRow={submitRow}>
                 <FormContainer.Submit submitButton={submitButton}>
-                    SignUp
+                    Sign Up
                 </FormContainer.Submit>
             </FormContainer.SubmitRow>
+                        <div style={signUpContainer}>
+                <div>Do you have an account?</div> 
+                <Link href={"/authentication/signIn"} style={signUpLink}>SignIn here</Link>
+            </div>
         </FormContainer.Body>
     </div>
     </FormContainer>
@@ -90,7 +105,12 @@ export default function Form() {
 }
 
 // ********************* COMPONENTS CSS STYLING ****************************//
-let padding = "5px 15px";
+
+const iconStyle={
+  padding:"0px 5px",
+  fontSize:"20px",
+  color:"rgba(79, 8, 161, 0.76)",
+}
 
 const formContainer ={
     display:"flex",
@@ -113,6 +133,7 @@ const mainContainer={
     width:"50vw",
     minWidth:"230px",
     maxWidth:"600px",
+    zIndex:2
 }
 const formBody ={
     backgroundColor: "white",
@@ -162,7 +183,9 @@ const formRow={
     maxWidth:"230px",
   }
   const labelStyle={
-    width: "100px",
+    display:"flex",
+    flexWrap:"wrap",
+    //width: "100px",
     padding: "2px 0px",
     color: "rgb(10, 10, 24)",
   }
@@ -188,6 +211,18 @@ const fileStyleSpan = {
   borderRadius:"5px",
   padding:"10px",
   color: "white",
+}
+
+const signUpContainer={
+    fontSize:"13px",
+    display:"flex",
+    flexWrap:"wrap",
+    gap:"10px",
+    padding:"10px 0px",
+}
+const signUpLink={
+    color:"rgba(41, 1, 87, 0.76)",
+    fontWeight:500,
 }
 
 const validateFullname = (values)=>{
