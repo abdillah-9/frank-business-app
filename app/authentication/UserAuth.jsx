@@ -18,7 +18,6 @@ export default function UserAuth({ setActiveLink, isActiveLink }) {
 
     const isAuthPage = pathname.startsWith("/authentication");
     const isHomePage = pathname === "/";
-    const isDashboard = pathname.startsWith("/dashboard");
 
     // Not authenticated → send to sign-in
     if (!isAuthenticated && !isAuthPage) {
@@ -31,12 +30,6 @@ export default function UserAuth({ setActiveLink, isActiveLink }) {
       hasRedirected.current = true;
       router.push("/dashboard");
     }
-
-    //redirect user t dashboard when refreshing the browser (coz when browser refreshed that var always == dashboard)
-    // if(isActiveLink == "dashboard"){
-    //   hasRedirected.current = true;
-    //   router.push("/"+isActiveLink);
-    // }
   }, [userLoading, isAuthenticated, pathname, router]);
 
   // Optional loading state during user check
