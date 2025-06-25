@@ -26,7 +26,7 @@ const windowWidth = windowSize.windowWidth;
 
 const linkClickEvent= (clickedLink)=>{
   dispatch(setReduxState({overlay:false,showNavBar:windowWidth < 1024 && false}));
-  setActiveLink(clickedLink)
+  // setActiveLink(clickedLink)
 }
 
 useEffect(() => {
@@ -70,68 +70,74 @@ useEffect(() => {
       </NavBarTemp.NavContainer> 
       
 
-      <div style={isActiveLink == "dashboard" ? activeLink : nonActiveLink}>
+      <div 
+      onClick={()=>setActiveLink("dashboard")} 
+            style={isActiveLink == "dashboard" ? activeLink : nonActiveLink}
+      >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><RiHome9Line/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-              <Link href="/dashboard" onClick={()=>linkClickEvent("dashboard")} >
-                Dashboard
-              </Link>
+              <Link href="/dashboard" onClick={()=>linkClickEvent("dashboard")}>Dashboard</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
 
-      <div style={isActiveLink == "expense" ? activeLink : nonActiveLink}>
+      <div 
+      onClick={()=>setActiveLink("expense")} 
+            style={isActiveLink == "expense" ? activeLink : nonActiveLink}
+      >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><GiMoneyStack/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-            <Link href="/expense" onClick={()=>linkClickEvent("expense")} >
-              Expense
-            </Link>
+            <Link href="/expense" onClick={()=>linkClickEvent("expense")}>Expense</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
 
-      <div style={isActiveLink == "budget" ? activeLink : nonActiveLink}>
+      <div 
+      onClick={()=>setActiveLink("budget")} 
+            style={isActiveLink == "budget" ? activeLink : nonActiveLink}
+      >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><CiMoneyBill/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-            <Link href="/budget" onClick={()=>linkClickEvent("budget")} >
-              Budget
-            </Link>
+            <Link href="/budget" onClick={()=>linkClickEvent("budget")}>Budget</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
 
-      <div style={isActiveLink == "user" ? activeLink : nonActiveLink}>
+      <div 
+      onClick={()=>setActiveLink("user")} 
+            style={isActiveLink == "user" ? activeLink : nonActiveLink}
+      >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><HiOutlineUser/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-            <Link href="/user" onClick={()=>linkClickEvent("user")} >
-              User
-            </Link>
+            <Link href="/user" onClick={()=>linkClickEvent("user")}>User</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
 
-      <div style={isActiveLink == "ai" ? activeLink : nonActiveLink}>
+      <div 
+      onClick={()=>setActiveLink("ai")} 
+            style={isActiveLink == "ai" ? activeLink : nonActiveLink}
+      >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><VscRobot/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-            <Link href="/ai" onClick={()=>linkClickEvent("ai")} >
-              AI-insights
-            </Link>
+            <Link href="/ai" onClick={()=>linkClickEvent("ai")}>AI-insights</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
 
-      <div style={isActiveLink == "settings" ? activeLink : nonActiveLink}>
+      <div 
+      onClick={()=>setActiveLink("settings")} 
+            style={isActiveLink == "settings" ? activeLink : nonActiveLink}
+      >
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle}>
         <NavBarTemp.NavIcon navIconStyle={navIconStyle}><IoSettingsOutline/></NavBarTemp.NavIcon>
           <NavBarTemp.NavText navTextStyle={navTextStyle}>
-            <Link href="/settings" onClick={()=>linkClickEvent("settings")}>
-              Settings
-            </Link>
+            <Link href="/settings" onClick={()=>linkClickEvent("settings")}>Settings</Link>
           </NavBarTemp.NavText>        
       </NavBarTemp.NavContainer>
       </div>
