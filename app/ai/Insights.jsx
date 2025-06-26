@@ -83,7 +83,7 @@ const main ={
     display:"flex",
     flexDirection:"column",
     gap:"15px",
-    height:"83vh",
+    height:"80vh",
     overflow:"auto",
 }
 const header={

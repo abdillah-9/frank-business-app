@@ -4,11 +4,15 @@ import useWindowSize from '@app/reusables/CUSTOM_hooks/useWindowSize';
 import FormContainer from '@app/reusables/UI_components/Form/FormContainer'
 import { HiXCircle } from '@node_modules/react-icons/hi2';
 import { useDispatch, useSelector } from '@node_modules/react-redux/dist/react-redux';
-import React from 'react'
+import React, { useState } from 'react'
 import toast from '@node_modules/react-hot-toast';
 import { useQuery } from '@node_modules/@tanstack/react-query/build/legacy';
 
 export default function Form({insertDataMutation, updateDataMutation, user, settingsData}) {
+  const today = new Date().toISOString().slice(0,10);
+  const [enteredAmount, setEnteredAmount] = useState(0);
+  const [selectedBudget, setSelectedBudget] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(today);
   const formState = useSelector((store)=>store.ReduxState.showForm);
   const newData = useSelector((store)=>store.ReduxState.fetchedFormData);
   const dispatch = useDispatch();
@@ -81,7 +85,15 @@ export default function Form({insertDataMutation, updateDataMutation, user, sett
   console.log(settingsData)
 
   return (
-    <FormContainer formContainer={form} handleClose={handleShowForm} formSubmit={formSubmit} onError={onError}>
+    <FormContainer 
+      formContainer={form}
+      handleClose={handleShowForm}
+      formSubmit={formSubmit} 
+      onError={onError}
+      setEnteredAmount={setEnteredAmount}
+      setSelectedBudget={setSelectedBudget}
+      setSelectedDate={setSelectedDate}
+    >
       <FormContainer.SubmitRow submitRow={submitRow}>
         <FormContainer.Icon iconStyle={cancelIcon} >
           <HiXCircle/>
