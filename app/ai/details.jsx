@@ -32,6 +32,13 @@ export default function Details({show, setShow, details}) {
                             <span>{++index}.</span> 
                             <span style={{padding:"0px 5px"}}>{miniRow.name}</span> 
                             <span>{" -> "}{miniRow.amount.toLocaleString()}Tsh</span>
+                            <span style={{padding:"0px 15px"}}>
+                                {new Date(miniRow.date).toLocaleDateString("en-US",{
+                                    year:"numeric",
+                                    month:"short",
+                                    day:"2-digit"
+                                })}
+                            </span>
                         </div>
                     )}
                 </div>

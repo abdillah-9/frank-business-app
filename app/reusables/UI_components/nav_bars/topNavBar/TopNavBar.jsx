@@ -48,7 +48,7 @@ export default function TopNavBar({isActiveLink, setActiveLink}) {
 
         <NavBarTemp.NavContainer navContainerStyle={activeUser}>
           <NavBarTemp.NavImage imageAttributes={imageAttributes}/>
-          <NavBarTemp.NavText navTextStyle={fullNameStyle}>
+          <NavBarTemp.NavText navTextStyle={{...fullNameStyle, textTransform:"capitalize"}}>
             {
                 user ? fullName :"active user"
             }

@@ -40,13 +40,13 @@ export default function page() {
         
         if (exists) {
             exists.expenseTotal += item.amount;
-            exists.allExpenses.push({name:item.name, amount:item.amount})
+            exists.allExpenses.push({name:item.name, amount:item.amount, date:item.date})
         } 
         else {
             acc.push({ 
                 expBudgetID: item.budgetID, 
                 expenseTotal: item.amount, 
-                allExpenses:[{name:item.name, amount:item.amount}], 
+                allExpenses:[{name:item.name, amount:item.amount, date:item.date}], 
             });
         }
         return acc

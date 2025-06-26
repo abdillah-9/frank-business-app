@@ -35,7 +35,8 @@ export default function Table({actionHandler}) {
             <div style={desc}>
               <div style={heading}>My Profile</div>
               <div style={{width: "250px",display:"flex",flexDirection:"column",gap:"10px"}}>
-                <div>FULL NAME</div><div style={headerCell}>{fullName}</div>
+                <div>FULL NAME</div>
+                <div style={{...headerCell, textTransform:"capitalize"}}>{fullName}</div>
               </div>
               <div style={{width: "250px",display:"flex",flexDirection:"column",gap:"10px"}}>
                 <div>E-MAIL</div><div style={headerCell}>{email}</div>   

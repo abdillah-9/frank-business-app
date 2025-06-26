@@ -146,7 +146,7 @@ export default function Form(
     console.log("daily budget "+dailyBudget);
     console.log("daily amountDiff "+amountDiff);
 
-    //Now check if amount is not higher that dailyBudgetLimit
+    //Now check if amount is not higher than dailyBudgetLimit
     if(amountDiff <= 0 ){
       setDisabled({disabled:"disabled", notAllowed:"not-allowed"});
       toast.error("You've reached ur expense limit");
@@ -218,7 +218,7 @@ export default function Form(
 
                   console.log("expense total by id in specific date "+JSON.stringify(expenseTotalByBudgetId));  
                   console.log("Total exp "+totalExpense+" and daily budget"+dailyBudget);
-                  const isExceeded = totalExpense >= dailyBudget;
+                  const isExceeded = totalExpense >= 0.75 * dailyBudget;
 
                   return !isExceeded ? (
                     <FormContainer.Option optionValue={budgetRow.id} key={budgetRow.id}>
@@ -230,7 +230,7 @@ export default function Form(
             }
         </FormContainer.Select>
       </FormContainer.Row>
-      
+
       <FormContainer.Row formRow={formRow}>
         <FormContainer.Label labelStyle={labelStyle}> amount </FormContainer.Label>
         <FormContainer.Number 
