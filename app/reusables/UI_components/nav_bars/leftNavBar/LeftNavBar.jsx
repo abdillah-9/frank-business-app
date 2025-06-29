@@ -69,7 +69,7 @@ useEffect(() => {
 
       <NavBarTemp.NavContainer navContainerStyle={navContainerStyle_Logo}>
         <NavBarTemp.NavImage imageAttributes={imageAttributes}/>
-        <NavBarTemp.NavText navTextStyle={navTextStyle_Logo}>FRANK BUSINESS APP</NavBarTemp.NavText>        
+        <NavBarTemp.NavText navTextStyle={navTextStyle_Logo}>PERSONAL FINANCE APP</NavBarTemp.NavText>        
       </NavBarTemp.NavContainer> 
       
 

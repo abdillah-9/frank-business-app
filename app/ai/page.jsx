@@ -85,6 +85,8 @@ export default function page() {
 
         const fetchData = async () => {
             try {
+              //'http://localhost:8000/predict'
+              //https://frank-business-ai.onrender.com/predict
               const response = await fetch('https://frank-business-ai.onrender.com/predict', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
