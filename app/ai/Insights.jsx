@@ -3,10 +3,11 @@ import Button from '@app/reusables/UI_components/Button'
 import Icon from '@app/reusables/UI_components/Icon'
 import { MdCheckCircle, MdOutlineSignalWifiConnectedNoInternet4, MdOutlineSignalWifiStatusbarConnectedNoInternet4 } from 'react-icons/md';
 import React, { useState } from 'react'
-import { TiWarningOutline } from '@node_modules/react-icons/ti';
+import { TiWarning, TiWarningOutline } from '@node_modules/react-icons/ti';
 import {TbRobotOff} from "react-icons/tb"
 import Details from './details';
-import { PiEmptyDuotone } from '@node_modules/react-icons/pi';
+import { PiEmptyDuotone, PiWarningCircleFill, PiWarningDiamondFill } from '@node_modules/react-icons/pi';
+import { BiErrorCircle } from '@node_modules/react-icons/bi';
 
 export default function Insights({data, stats}) {
     const [insights, setInsights] = useState(data);
@@ -34,16 +35,21 @@ export default function Insights({data, stats}) {
             insights && insights.length > 0 ? insights.map((row)=>
                 <div style={cards} key={row.budgetID} >
                     <Icon iconStyle={iconStyle} className={"insightIcons"}>
-                        {row.over_budget 
-                        ? <TiWarningOutline color="rgb(241, 62, 8)" />
-                        : <MdCheckCircle color="green" />
+                        {row.percentage_spent > 74 
+                        ? <PiWarningCircleFill color="rgb(241, 8, 8)"/>
+                        : row.percentage_spent > 50 ? <PiWarningDiamondFill color="rgb(241, 198, 8)" /> :
+                        <MdCheckCircle color="green" />
                         }
                     </Icon>
                         <div style={desc}>
                             <div>
                                 <span style={budget_name}>{row.budgetName} {"->"} </span>
                                 <span 
-                                    style={row.over_budget?{...title, ...over_budget} : title}>
+                                    style={
+                                        row.percentage_spent > 74 ? {...title, ...over_budget} : 
+                                        row.percentage_spent > 50 ? {...title, color:"rgb(241, 198, 8)"} : title
+                                    }
+                                >
                                     {row.tip_title}
                                 </span>
                             </div>

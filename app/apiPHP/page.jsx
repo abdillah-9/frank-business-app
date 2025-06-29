@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -97,3 +97,32 @@ export default function Home() {
     </div>
   );
 }
+
+
+// {
+//   variables = {
+//     name :"abdi",
+//     age:25
+//   }
+//   mutations = 
+//   `
+//   mutation CreateUser($name: String!, $age: Int!){
+//         createUser(name: $name, age: $age){
+//           return {name, age}
+//         }
+//     }
+//   `
+
+//   useEffect(
+//     ()=>{
+//       async function newUser(){
+//         const res = fetch("http://localhost/createuser",{
+//           body: JSON.stringify({query:mutation, variables}),
+//           headers: {"Content-Type":"application/json"},
+//           method:"POST"
+//         });
+//         const data = await res.json(); 
+//       }
+//     }
+//   ,[])
+// }
