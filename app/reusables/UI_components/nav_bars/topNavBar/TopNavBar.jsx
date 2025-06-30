@@ -8,6 +8,7 @@ import { setReduxState } from '@app/provider/redux/reducer';
 import useUser from '@app/authentication/hooks/useUser';
 import useLogOut from '@app/authentication/hooks/useLogOut';
 import toast from '@node_modules/react-hot-toast/dist';
+import { usePathname } from '@node_modules/next/navigation';
 
 export default function TopNavBar({isActiveLink, setActiveLink}) {
 
@@ -16,6 +17,7 @@ export default function TopNavBar({isActiveLink, setActiveLink}) {
   const {user} = useUser();
   user ? {id, email, user_metadata:{avatar, fullName}} = user :""
 
+  const currentPath = usePathname();
   const isVisible =  useSelector((store)=> store.ReduxState.showNavBar)
   const showOverlay =  useSelector((store)=> store.ReduxState.overlay)
   const dispatch = useDispatch()
@@ -41,7 +43,7 @@ export default function TopNavBar({isActiveLink, setActiveLink}) {
      borderBottom:"2px solid rgba(79, 8, 161, 0.36)",paddingTop:"10px"}}>
       <div style={{textTransform:"capitalize", fontWeight:500, fontSize:"20px"}}>
         {
-          isActiveLink == "dashboard" ? isActiveLink : ""
+          currentPath.includes("/dashboard") ? isActiveLink : ""
         }
       </div>
       <NavBarTemp navBarTempStyle={navBarTempStyle}>
